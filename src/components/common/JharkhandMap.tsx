@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { ProblemReport } from '../../types';
-import { MapPin, Info, Layers, Compass, CheckCircle2 } from 'lucide-react';
+import { MapPin, Info, Compass, CheckCircle2 } from 'lucide-react';
 import { useAccessibility } from '../../context/AccessibilityContext';
 
 interface JharkhandMapProps {
@@ -75,7 +75,7 @@ export const JharkhandMap: React.FC<JharkhandMapProps> = ({
             <h2 className="text-sm font-bold">
               {t('Jharkhand GovTech Spatial Grievance Map', 'झारखंड राज्य स्थानिक समस्या मानचित्र')}
             </h2>
-            <p className="text-[11px] text-slate-300">
+            <p className="text-xs text-slate-300">
               {t('District-level distribution of verified problems & pilot deployments', 'जिलावार सत्यापित समस्याएं एवं पायलट परिनियोजन')}
             </p>
           </div>
@@ -206,7 +206,7 @@ export const JharkhandMap: React.FC<JharkhandMapProps> = ({
           </svg>
 
           {/* Map Legend */}
-          <div className="absolute bottom-2 left-3 bg-white/90 backdrop-blur-sm p-2 rounded border border-gov-border text-[10px] space-y-1 shadow-sm">
+          <div className="absolute bottom-2 left-3 bg-white/95 backdrop-blur-sm p-2.5 rounded border border-gov-border text-xs space-y-1.5 shadow-sm">
             <div className="flex items-center space-x-2">
               <span className="w-2.5 h-2.5 rounded-full bg-gov-navy border border-amber-400"></span>
               <span className="text-slate-700 font-medium">Selected District</span>
@@ -227,7 +227,7 @@ export const JharkhandMap: React.FC<JharkhandMapProps> = ({
           <div>
             <div className="flex items-center justify-between border-b border-gov-border pb-2 mb-3">
               <div>
-                <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">
+                <span className="text-xs uppercase font-semibold text-slate-500 tracking-wider">
                   {t('District Overview', 'जिला विवरणी')}
                 </span>
                 <h3 className="text-base font-bold text-gov-navy flex items-center space-x-1">
@@ -258,8 +258,8 @@ export const JharkhandMap: React.FC<JharkhandMapProps> = ({
                         : 'bg-white border-slate-200 hover:border-slate-400'
                     }`}
                   >
-                    <div className="flex items-center justify-between text-[10px] mb-1">
-                      <span className="font-mono text-slate-500">{prob.id}</span>
+                    <div className="flex items-center justify-between text-xs mb-1">
+                      <span className="font-mono font-semibold text-slate-600">{prob.id}</span>
                       <span
                         className={`px-1.5 py-0.2 rounded font-bold ${
                           prob.aiAnalysis.priority === 'Critical'
@@ -271,7 +271,7 @@ export const JharkhandMap: React.FC<JharkhandMapProps> = ({
                       </span>
                     </div>
                     <div className="text-xs font-bold text-slate-900 line-clamp-2">{prob.title}</div>
-                    <div className="text-[11px] text-slate-500 mt-1 flex items-center justify-between">
+                    <div className="text-xs text-slate-600 mt-1 flex items-center justify-between">
                       <span>{prob.panchayatOrLocality}</span>
                       <span className="font-medium text-gov-navy">
                         {prob.status === 'pilot_deployed' ? 'Active Pilot' : prob.status.replace('_', ' ')}
@@ -283,12 +283,12 @@ export const JharkhandMap: React.FC<JharkhandMapProps> = ({
             </div>
           </div>
 
-          <div className="pt-3 border-t border-gov-border mt-3 text-[11px] text-slate-500 flex items-center justify-between">
+          <div className="pt-3 border-t border-gov-border mt-3 text-xs text-slate-500 flex items-center justify-between">
             <span className="flex items-center space-x-1">
               <CheckCircle2 className="w-3.5 h-3.5 text-gov-green" />
               <span>GIS Layer: WGS84 Datum</span>
             </span>
-            <span className="font-mono text-[10px]">RMC-JUIDCO Sync</span>
+            <span className="font-mono text-xs font-medium">RMC-JUIDCO Sync</span>
           </div>
         </div>
       </div>

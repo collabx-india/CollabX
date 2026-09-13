@@ -29,7 +29,7 @@ const MainAppContent: React.FC = () => {
   const { currentUser } = useAuth();
   const location = useLocation();
 
-  const [refreshKey, setRefreshKey] = useState<number>(0);
+  const [refreshKey, _setRefreshKey] = useState<number>(0);
 
   const isCitizenRoute = location.pathname.startsWith('/citizen');
 
@@ -120,24 +120,24 @@ const MainAppContent: React.FC = () => {
       </main>
 
       {/* Official GIGW-Compliant Government Footer */}
-      <footer className={`bg-white border-t border-gov-border ${isCitizenRoute ? 'mt-6 py-6' : 'mt-12 py-8'} px-4 sm:px-8 text-xs text-slate-600`}>
+      <footer className={`bg-white border-t border-gov-border ${isCitizenRoute ? 'mt-6 py-6' : 'mt-12 py-8'} px-4 sm:px-8 text-sm text-slate-600`}>
         <div className="max-w-7xl mx-auto space-y-6">
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 border-b border-slate-200 pb-6">
             {/* Identity */}
             <div className="space-y-2">
-              <div className="font-black text-gov-navy text-base">COLLABX</div>
-              <p className="text-xs text-slate-600 font-medium leading-relaxed">
+              <div className="font-black text-gov-navy text-lg tracking-tight">COLLABX</div>
+              <p className="text-sm text-slate-600 font-medium leading-relaxed">
                 Connecting Problems, Ideas & Impact
               </p>
-              <div className="text-[11px] text-slate-500 font-bold uppercase tracking-wider">
+              <div className="text-xs text-slate-600 font-bold uppercase tracking-wider">
                 Government of Jharkhand
               </div>
             </div>
 
             {/* Quick Links */}
             <div className="space-y-2">
-              <div className="font-bold text-gov-navy text-xs uppercase tracking-wider">Important Links</div>
-              <ul className="space-y-1 text-[11px] font-medium text-slate-600">
+              <div className="font-bold text-gov-navy text-sm uppercase tracking-wider">Important Links</div>
+              <ul className="space-y-1.5 text-xs sm:text-sm font-medium text-slate-600">
                 <li><Link to="/about" className="hover:underline hover:text-gov-blue">About CollabX</Link></li>
                 <li><Link to="/services" className="hover:underline hover:text-gov-blue">Public Services Directory</Link></li>
                 <li><Link to="/report" className="hover:underline hover:text-gov-blue">Report a Problem</Link></li>
@@ -149,8 +149,8 @@ const MainAppContent: React.FC = () => {
 
             {/* Policies */}
             <div className="space-y-2">
-              <div className="font-bold text-gov-navy text-xs uppercase tracking-wider">Website Policies</div>
-              <ul className="space-y-1 text-[11px] text-slate-600 font-medium">
+              <div className="font-bold text-gov-navy text-sm uppercase tracking-wider">Website Policies</div>
+              <ul className="space-y-1.5 text-xs sm:text-sm text-slate-600 font-medium">
                 <li><span className="hover:underline cursor-pointer">Privacy Policy</span></li>
                 <li><span className="hover:underline cursor-pointer">Terms of Service</span></li>
                 <li><span className="hover:underline cursor-pointer">Copyright Policy</span></li>
@@ -161,8 +161,8 @@ const MainAppContent: React.FC = () => {
 
             {/* Accessibility & Compliance */}
             <div className="space-y-2">
-              <div className="font-bold text-gov-navy text-xs uppercase tracking-wider">Accessibility & Standards</div>
-              <div className="space-y-1.5 text-[11px] text-slate-600">
+              <div className="font-bold text-gov-navy text-sm uppercase tracking-wider">Accessibility & Standards</div>
+              <div className="space-y-1.5 text-xs sm:text-sm text-slate-600">
                 <p>GIGW (Guidelines for Indian Government Websites) Compliant</p>
                 <p>WCAG 2.1 AA Accessibility Standards</p>
                 <p>WGS84 GIS Spatial Data Standards</p>
@@ -170,7 +170,7 @@ const MainAppContent: React.FC = () => {
             </div>
           </div>
 
-          <div className="flex flex-wrap items-center justify-between gap-3 text-[11px] text-slate-500">
+          <div className="flex flex-wrap items-center justify-between gap-3 text-xs sm:text-sm text-slate-600">
             <p>
               Proposed GovTech platform architecture for the Government of Jharkhand. Demonstrations reflect local browser prototype state.
             </p>

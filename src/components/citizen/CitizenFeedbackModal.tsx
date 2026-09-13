@@ -124,15 +124,15 @@ export const CitizenFeedbackModal: React.FC<CitizenFeedbackModalProps> = ({
       <div className="bg-white rounded-lg border border-gov-border shadow-gov-lg max-w-lg w-full p-6 space-y-5">
         <div className="border-b border-gov-border pb-3 flex items-center justify-between">
           <div>
-            <span className="text-[10px] font-bold text-gov-green uppercase tracking-wider">
+            <span className="text-xs sm:text-sm font-bold text-gov-green uppercase tracking-wider">
               {t('Post-Pilot Community Validation', 'पायलट उपरांत सामुदायिक सत्यापन')}
             </span>
-            <h3 className="text-lg font-bold text-gov-navy">
+            <h3 className="text-[19px] font-semibold text-gov-navy mt-0.5">
               {t('Did this solve the problem?', 'क्या इस समाधान से समस्या का निवारण हुआ?')}
             </h3>
-            <p className="text-xs text-slate-500 mt-0.5">{locality}</p>
+            <p className="text-sm text-slate-600 mt-0.5">{locality}</p>
           </div>
-          <button onClick={onClose} className="text-slate-400 hover:text-slate-700">
+          <button onClick={onClose} className="text-slate-400 hover:text-slate-700 p-1">
             <X className="w-5 h-5" />
           </button>
         </div>
@@ -143,22 +143,22 @@ export const CitizenFeedbackModal: React.FC<CitizenFeedbackModalProps> = ({
             <div className="text-base font-bold text-slate-900">
               {t('Feedback Recorded in Impact Registry!', 'फीडबैक प्रभाव रजिस्टर में दर्ज किया गया!')}
             </div>
-            <div className="text-xs text-slate-500">
+            <div className="text-sm text-slate-600">
               {t('Your ground evaluation helps the Government of Jharkhand decide on statewide replication.', 'आपकी प्रतिक्रिया से राज्यव्यापी प्रतिकृति निर्णय में सहायता मिलती है।')}
             </div>
           </div>
         ) : (
-          <form onSubmit={handleSubmit} className="space-y-4 text-xs">
+          <form onSubmit={handleSubmit} className="space-y-4">
             {/* 3 Main Buttons: YES, PARTIALLY, NO */}
             <div>
-              <label className="block font-bold text-slate-700 uppercase tracking-wider mb-2">
+              <label className="block text-[15px] sm:text-base font-semibold text-slate-800 mb-2">
                 {t('Status of Problem Resolution *', 'समस्या निवारण स्थिति *')}
               </label>
-              <div className="grid grid-cols-3 gap-2">
+              <div className="grid grid-cols-3 gap-2 sm:gap-3">
                 <button
                   type="button"
                   onClick={() => setSolvedStatus('YES')}
-                  className={`py-3 px-2 rounded-lg border text-center font-bold text-xs transition ${
+                  className={`py-3 px-2 rounded-lg border text-center font-bold text-sm sm:text-base transition ${
                     solvedStatus === 'YES'
                       ? 'bg-emerald-600 text-white border-emerald-600 shadow-sm'
                       : 'bg-slate-50 text-slate-700 border-slate-300 hover:bg-slate-100'
@@ -170,7 +170,7 @@ export const CitizenFeedbackModal: React.FC<CitizenFeedbackModalProps> = ({
                 <button
                   type="button"
                   onClick={() => setSolvedStatus('PARTIALLY')}
-                  className={`py-3 px-2 rounded-lg border text-center font-bold text-xs transition ${
+                  className={`py-3 px-2 rounded-lg border text-center font-bold text-sm sm:text-base transition ${
                     solvedStatus === 'PARTIALLY'
                       ? 'bg-amber-500 text-white border-amber-500 shadow-sm'
                       : 'bg-slate-50 text-slate-700 border-slate-300 hover:bg-slate-100'
@@ -182,7 +182,7 @@ export const CitizenFeedbackModal: React.FC<CitizenFeedbackModalProps> = ({
                 <button
                   type="button"
                   onClick={() => setSolvedStatus('NO')}
-                  className={`py-3 px-2 rounded-lg border text-center font-bold text-xs transition ${
+                  className={`py-3 px-2 rounded-lg border text-center font-bold text-sm sm:text-base transition ${
                     solvedStatus === 'NO'
                       ? 'bg-red-600 text-white border-red-600 shadow-sm'
                       : 'bg-slate-50 text-slate-700 border-slate-300 hover:bg-slate-100'
@@ -195,10 +195,10 @@ export const CitizenFeedbackModal: React.FC<CitizenFeedbackModalProps> = ({
 
             {/* Star Rating */}
             <div>
-              <label className="block font-bold text-slate-700 uppercase tracking-wider mb-1">
+              <label className="block text-[15px] sm:text-base font-semibold text-slate-800 mb-1.5">
                 {t('Civic Satisfaction Rating (1 to 5 Stars) *', 'संतुष्टि रेटिंग (1 से 5 स्टार) *')}
               </label>
-              <div className="flex items-center space-x-1 py-1">
+              <div className="flex items-center space-x-1.5 py-1">
                 {[1, 2, 3, 4, 5].map(star => (
                   <button
                     type="button"
@@ -209,7 +209,7 @@ export const CitizenFeedbackModal: React.FC<CitizenFeedbackModalProps> = ({
                     className="p-1 focus:outline-none"
                   >
                     <Star
-                      className={`w-7 h-7 transition ${
+                      className={`w-8 h-8 transition ${
                         (hoverRating || rating) >= star
                           ? 'text-amber-400 fill-amber-400'
                           : 'text-slate-300'
@@ -217,13 +217,13 @@ export const CitizenFeedbackModal: React.FC<CitizenFeedbackModalProps> = ({
                     />
                   </button>
                 ))}
-                <span className="ml-2 font-bold text-slate-700 text-sm">{rating} / 5 Stars</span>
+                <span className="ml-3 font-bold text-slate-700 text-base">{rating} / 5 Stars</span>
               </div>
             </div>
 
             {/* Comment */}
             <div>
-              <label className="block font-bold text-slate-700 uppercase tracking-wider mb-1">
+              <label className="block text-[15px] sm:text-base font-semibold text-slate-800 mb-1.5">
                 {t('Ground Observation & Resident Comments *', 'जमीनी अवलोकन एवं टिप्पणी *')}
               </label>
               <textarea
@@ -231,35 +231,35 @@ export const CitizenFeedbackModal: React.FC<CitizenFeedbackModalProps> = ({
                 rows={3}
                 value={comment}
                 onChange={e => setComment(e.target.value)}
-                className="w-full p-2.5 text-xs border border-slate-300 rounded focus:border-gov-blue"
+                className="w-full p-3 text-base text-slate-900 border border-slate-300 rounded-md focus:border-gov-blue focus:ring-1 focus:ring-gov-blue leading-relaxed"
               ></textarea>
             </div>
 
             {/* Photo Proof Simulation */}
-            <div className="p-3 bg-slate-50 rounded border border-slate-200 flex items-center justify-between">
-              <div className="flex items-center space-x-2">
+            <div className="p-3 bg-slate-50 rounded-md border border-slate-200 flex items-center justify-between text-sm">
+              <div className="flex items-center space-x-2 text-slate-700">
                 <Camera className="w-4 h-4 text-gov-blue" />
-                <span className="text-slate-700">Photo Proof: <span className="font-semibold">Harmu_dry_road_post_pilot.jpg</span></span>
+                <span>Photo Proof: <span className="font-semibold">Harmu_dry_road_post_pilot.jpg</span></span>
               </div>
-              <span className="text-[10px] bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded">
+              <span className="text-xs bg-emerald-100 text-emerald-800 font-bold px-2.5 py-0.5 rounded">
                 Verified Clear
               </span>
             </div>
 
-            <div className="flex justify-end space-x-2 pt-2 border-t border-slate-100">
+            <div className="flex justify-end space-x-3 pt-3 border-t border-slate-100">
               <button
                 type="button"
                 onClick={onClose}
-                className="px-3 py-2 border border-slate-300 rounded text-slate-700 hover:bg-slate-100"
+                className="px-4 py-2 border border-slate-300 rounded-md text-slate-700 font-medium hover:bg-slate-100 text-sm sm:text-base"
               >
                 {t('Cancel', 'रद्द करें')}
               </button>
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="px-5 py-2 bg-gov-navy hover:bg-gov-navy-dark text-white font-bold rounded flex items-center space-x-1.5 shadow-sm"
+                className="px-6 py-2.5 bg-gov-navy hover:bg-gov-navy-dark text-white font-bold rounded-md flex items-center space-x-2 text-sm sm:text-base shadow-sm"
               >
-                <Send className="w-3.5 h-3.5" />
+                <Send className="w-4 h-4" />
                 <span>{isSubmitting ? t('Saving...', 'सहेजा जा रहा है...') : t('Submit Validation', 'सत्यापन जमा करें')}</span>
               </button>
             </div>

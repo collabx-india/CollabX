@@ -3,30 +3,13 @@ import { useAuth } from '../../context/AuthContext';
 import { useAccessibility } from '../../context/AccessibilityContext';
 import { storageService } from '../../services/storageService';
 import { ProblemReport } from '../../types';
-import { 
-  ResponsiveContainer, 
-  BarChart, 
-  Bar, 
-  XAxis, 
-  YAxis, 
-  Tooltip, 
-  PieChart, 
-  Pie, 
-  Cell 
-} from 'recharts';
+import { RegionalProblemIntelligence } from './RegionalProblemIntelligence';
 import { 
   Building2, 
   Layers, 
-  Users, 
-  Briefcase, 
-  Award, 
   Eye, 
-  X, 
-  MapPin, 
-  Calendar,
-  CheckCircle2,
-  Clock,
-  Sparkles
+  X,
+  Award
 } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
@@ -65,18 +48,18 @@ const GovProjectDetailModal: React.FC<GovProjectDetailModalProps> = ({ problem, 
         aria-labelledby="gov-modal-title"
       >
         {/* Header */}
-        <div className="bg-gov-navy text-white p-4 flex items-center justify-between">
-          <div className="flex items-center space-x-2">
-            <span className="font-mono text-xs font-bold bg-gov-saffron text-white px-2 py-0.5 rounded">
+        <div className="bg-gov-navy text-white p-4 sm:p-5 flex items-center justify-between">
+          <div className="flex items-center space-x-3">
+            <span className="font-mono text-sm sm:text-[15px] font-bold bg-gov-saffron text-white px-2.5 py-1 rounded">
               {problem.id}
             </span>
-            <h3 id="gov-modal-title" className="font-bold text-sm sm:text-base line-clamp-1">
+            <h3 id="gov-modal-title" className="text-[19px] font-semibold text-white leading-snug line-clamp-1">
               {problem.title}
             </h3>
           </div>
           <button
             onClick={onClose}
-            className="text-slate-300 hover:text-white p-1 rounded hover:bg-white/10"
+            className="text-slate-300 hover:text-white p-1.5 rounded hover:bg-white/10 transition"
             aria-label="Close modal"
           >
             <X className="w-5 h-5" />
@@ -84,121 +67,121 @@ const GovProjectDetailModal: React.FC<GovProjectDetailModalProps> = ({ problem, 
         </div>
 
         {/* Content (Strictly Read-Only) */}
-        <div className="p-5 space-y-4 text-xs max-h-[75vh] overflow-y-auto">
-          <div className="flex flex-wrap items-center justify-between gap-2 p-3 bg-slate-50 rounded border border-slate-200">
-            <div className="flex items-center space-x-2">
-              <span className="px-2.5 py-0.5 rounded font-bold uppercase text-[10px] bg-gov-navy text-white">
+        <div className="p-5 sm:p-6 space-y-5 text-sm sm:text-base max-h-[75vh] overflow-y-auto">
+          <div className="flex flex-wrap items-center justify-between gap-3 p-3.5 bg-slate-50 rounded-lg border border-slate-200">
+            <div className="flex items-center space-x-2.5">
+              <span className="px-3 py-1 rounded-md font-bold uppercase text-xs sm:text-sm bg-gov-navy text-white">
                 Stage: {problem.status.replace('_', ' ')}
               </span>
-              <span className="px-2 py-0.5 rounded bg-blue-50 text-gov-navy font-semibold text-[10px]">
+              <span className="px-2.5 py-1 rounded-md bg-blue-50 text-gov-navy font-semibold text-xs sm:text-sm border border-blue-200">
                 Progress: {problem.progressPercentage || 50}%
               </span>
             </div>
-            <span className="text-[11px] text-slate-500 font-mono">
+            <span className="text-xs sm:text-sm text-slate-500 font-mono">
               Reported: {new Date(problem.createdAt).toLocaleDateString()}
             </span>
           </div>
 
-          <div className="space-y-1">
-            <span className="font-bold text-slate-700 uppercase tracking-wider text-[10px] block">
+          <div className="space-y-1.5">
+            <span className="font-semibold text-slate-800 text-sm sm:text-[15px] block">
               Citizen Problem Statement:
             </span>
-            <p className="text-slate-800 leading-relaxed bg-white p-3 rounded border border-slate-200">
+            <p className="text-slate-800 text-sm sm:text-base leading-relaxed bg-white p-3.5 rounded-lg border border-slate-200">
               {problem.description}
             </p>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-            <div className="p-2.5 bg-slate-50 rounded border border-slate-200">
-              <span className="text-slate-500 text-[10px] font-semibold uppercase block">Location & District</span>
-              <strong className="text-slate-900 mt-0.5 block">{problem.panchayatOrLocality}, {problem.district}</strong>
+            <div className="p-3 bg-slate-50 rounded-lg border border-slate-200">
+              <span className="text-slate-500 text-xs font-semibold uppercase block">Location & District</span>
+              <strong className="text-slate-900 text-sm sm:text-base mt-1 block">{problem.panchayatOrLocality}, {problem.district}</strong>
             </div>
-            <div className="p-2.5 bg-slate-50 rounded border border-slate-200">
-              <span className="text-slate-500 text-[10px] font-semibold uppercase block">Affected Population</span>
-              <strong className="text-slate-900 mt-0.5 block">
+            <div className="p-3 bg-slate-50 rounded-lg border border-slate-200">
+              <span className="text-slate-500 text-xs font-semibold uppercase block">Affected Population</span>
+              <strong className="text-slate-900 text-sm sm:text-base mt-1 block">
                 {problem.affectedPopulation ? `${problem.affectedPopulation.toLocaleString()} Residents` : 'Community'}
               </strong>
             </div>
-            <div className="p-2.5 bg-slate-50 rounded border border-slate-200">
-              <span className="text-slate-500 text-[10px] font-semibold uppercase block">AI Match Score</span>
-              <strong className="text-gov-navy mt-0.5 block">{problem.matchingScore || 88}%</strong>
+            <div className="p-3 bg-slate-50 rounded-lg border border-slate-200">
+              <span className="text-slate-500 text-xs font-semibold uppercase block">AI Match Score</span>
+              <strong className="text-gov-navy text-base sm:text-lg font-mono font-bold mt-1 block">{problem.matchingScore || 88}%</strong>
             </div>
           </div>
 
           {/* Institutional & Team Routing */}
-          <div className="p-3.5 bg-blue-50/50 rounded-lg border border-blue-200 grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div className="p-4 bg-blue-50/50 rounded-lg border border-blue-200 grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div>
-              <span className="text-[10px] uppercase font-bold text-blue-900 block">University & Department</span>
-              <strong className="text-gov-navy block mt-0.5">{problem.matchedUniversity || 'Birla Institute of Technology (BIT) Mesra'}</strong>
-              <span className="text-slate-600 text-[11px]">{problem.matchedDepartment || 'Civil Engineering'}</span>
+              <span className="text-xs uppercase font-bold text-blue-900 block">University & Department</span>
+              <strong className="text-gov-navy text-sm sm:text-base block mt-1">{problem.matchedUniversity || 'Birla Institute of Technology (BIT) Mesra'}</strong>
+              <span className="text-slate-600 text-xs sm:text-sm block mt-0.5">{problem.matchedDepartment || 'Civil Engineering'}</span>
             </div>
 
             <div>
-              <span className="text-[10px] uppercase font-bold text-blue-900 block">Research Team & Mentor</span>
-              <strong className="text-slate-900 block mt-0.5">{problem.teamName || 'Engineering Taskforce'}</strong>
-              <span className="text-slate-600 text-[11px]">Mentor: {problem.facultyMentorName || 'Faculty Chair'}</span>
+              <span className="text-xs uppercase font-bold text-blue-900 block">Research Team & Mentor</span>
+              <strong className="text-slate-900 text-sm sm:text-base block mt-1">{problem.teamName || 'Engineering Taskforce'}</strong>
+              <span className="text-slate-600 text-xs sm:text-sm block mt-0.5">Mentor: {problem.facultyMentorName || 'Faculty Chair'}</span>
             </div>
 
             <div>
-              <span className="text-[10px] uppercase font-bold text-blue-900 block">Industry Partner</span>
-              <strong className="text-slate-900 block mt-0.5">{problem.industryPartnerName || 'Tata Steel CSR / Seeking Partner'}</strong>
-              <span className="text-slate-600 text-[11px]">CSR & Hardware Collaboration</span>
+              <span className="text-xs uppercase font-bold text-blue-900 block">Industry Partner</span>
+              <strong className="text-slate-900 text-sm sm:text-base block mt-1">{problem.industryPartnerName || 'Tata Steel CSR / Seeking Partner'}</strong>
+              <span className="text-slate-600 text-xs sm:text-sm block mt-0.5">CSR & Hardware Collaboration</span>
             </div>
           </div>
 
           {/* Milestones */}
-          <div className="p-3.5 bg-slate-50 rounded-lg border border-slate-200 space-y-1.5">
-            <span className="text-[10px] uppercase font-bold text-slate-600 block">Project Milestones:</span>
-            <div className="text-slate-800">
-              <span className="font-semibold">Current Milestone:</span> {problem.currentMilestoneTitle || 'Engineering Solution Development'}
+          <div className="p-4 bg-slate-50 rounded-lg border border-slate-200 space-y-2">
+            <span className="text-xs uppercase font-bold text-slate-700 block">Project Milestones:</span>
+            <div className="text-slate-800 text-sm sm:text-base">
+              <span className="font-semibold text-slate-900">Current Milestone:</span> {problem.currentMilestoneTitle || 'Engineering Solution Development'}
             </div>
             {problem.nextMilestoneTitle && (
-              <div className="text-slate-600 text-[11px]">
-                <span className="font-semibold">Next Milestone:</span> {problem.nextMilestoneTitle}
+              <div className="text-slate-600 text-xs sm:text-sm">
+                <span className="font-semibold text-slate-800">Next Milestone:</span> {problem.nextMilestoneTitle}
               </div>
             )}
           </div>
 
           {/* Impact Metrics (if completed or pilot) */}
           {problem.impactMetrics && (
-            <div className="p-3.5 bg-emerald-50 rounded-lg border border-emerald-300 space-y-2">
-              <div className="flex items-center space-x-1.5 text-emerald-950 font-bold">
-                <Award className="w-4 h-4 text-emerald-700" />
+            <div className="p-4 bg-emerald-50 rounded-lg border border-emerald-300 space-y-2.5">
+              <div className="flex items-center space-x-2 text-emerald-950 font-bold text-sm sm:text-base">
+                <Award className="w-5 h-5 text-emerald-700" />
                 <span>Verified Community Impact Metrics</span>
               </div>
-              <p className="text-emerald-900 text-xs">
+              <p className="text-emerald-900 text-sm sm:text-base leading-relaxed">
                 {problem.impactMetrics.summary || 'Verified reduction in local flooding and enhanced public infrastructure resilience.'}
               </p>
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1 text-[11px]">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 pt-1 text-xs sm:text-sm">
                 {problem.impactMetrics.beneficiariesCount && (
-                  <div className="bg-white p-2 rounded border border-emerald-200">
+                  <div className="bg-white p-2.5 rounded-md border border-emerald-200">
                     <span className="text-slate-500 block">Beneficiaries:</span>
-                    <strong className="text-emerald-950">{problem.impactMetrics.beneficiariesCount.toLocaleString()} Citizens</strong>
+                    <strong className="text-emerald-950 text-sm sm:text-base">{problem.impactMetrics.beneficiariesCount.toLocaleString()} Citizens</strong>
                   </div>
                 )}
                 {problem.impactMetrics.costSavings && (
-                  <div className="bg-white p-2 rounded border border-emerald-200">
+                  <div className="bg-white p-2.5 rounded-md border border-emerald-200">
                     <span className="text-slate-500 block">Public Savings:</span>
-                    <strong className="text-emerald-950">{problem.impactMetrics.costSavings}</strong>
+                    <strong className="text-emerald-950 text-sm sm:text-base">{problem.impactMetrics.costSavings}</strong>
                   </div>
                 )}
                 {problem.impactMetrics.performanceImprovement && (
-                  <div className="bg-white p-2 rounded border border-emerald-200">
+                  <div className="bg-white p-2.5 rounded-md border border-emerald-200">
                     <span className="text-slate-500 block">Performance Gain:</span>
-                    <strong className="text-emerald-950">{problem.impactMetrics.performanceImprovement}</strong>
+                    <strong className="text-emerald-950 text-sm sm:text-base">{problem.impactMetrics.performanceImprovement}</strong>
                   </div>
                 )}
                 {problem.impactMetrics.villagesCovered && (
-                  <div className="bg-white p-2 rounded border border-emerald-200">
+                  <div className="bg-white p-2.5 rounded-md border border-emerald-200">
                     <span className="text-slate-500 block">Villages:</span>
-                    <strong className="text-emerald-950">{problem.impactMetrics.villagesCovered} Localities</strong>
+                    <strong className="text-emerald-950 text-sm sm:text-base">{problem.impactMetrics.villagesCovered} Localities</strong>
                   </div>
                 )}
               </div>
             </div>
           )}
 
-          <div className="p-2.5 bg-amber-50 rounded border border-amber-200 text-amber-900 text-[11px] italic">
+          <div className="p-3 bg-amber-50 rounded-lg border border-amber-200 text-amber-900 text-xs sm:text-sm italic leading-relaxed">
             * Read-Only Monitoring View: As per State GovTech Governance Standards, Government accounts monitor progress and outcome telemetry without intervening in academic engineering workflows.
           </div>
         </div>
@@ -207,7 +190,7 @@ const GovProjectDetailModal: React.FC<GovProjectDetailModalProps> = ({ problem, 
         <div className="p-4 border-t border-slate-200 bg-slate-50 flex items-center justify-end">
           <button
             onClick={onClose}
-            className="px-5 py-2 bg-slate-200 hover:bg-slate-300 text-slate-800 rounded font-bold text-xs"
+            className="px-5 py-2.5 bg-slate-200 hover:bg-slate-300 text-slate-800 rounded-lg font-semibold text-sm sm:text-base transition"
           >
             Close
           </button>
@@ -226,94 +209,52 @@ export const GovDashboard: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const getTabFromPath = () => {
-    if (location.pathname.endsWith('/projects')) return 'projects';
-    return 'monitoring';
-  };
-
-  const [activeTab, setActiveTab] = useState<string>(getTabFromPath());
+  const activeTab = location.pathname.endsWith('/projects') ? 'projects' : 'monitoring';
   const [problems] = useState<ProblemReport[]>(() => storageService.getProblems());
   const [selectedProblem, setSelectedProblem] = useState<ProblemReport | null>(null);
   const [isDetailOpen, setIsDetailOpen] = useState<boolean>(false);
 
-  useEffect(() => {
-    setActiveTab(getTabFromPath());
-  }, [location.pathname]);
-
-  const handleTabChange = (tab: string, path: string) => {
-    setActiveTab(tab);
+  const handleTabChange = (_tab: string, path: string) => {
     navigate(path);
   };
-
-  // Analytics Datasets
-  const domainData = [
-    { name: 'Disaster & Water Mgmt', value: 48, color: '#0A2540' },
-    { name: 'Roads & Transit', value: 28, color: '#E65100' },
-    { name: 'Agriculture & Irrigation', value: 24, color: '#138808' },
-    { name: 'Energy & Rural Power', value: 16, color: '#FF9933' },
-    { name: 'Waste & Sanitation', value: 14, color: '#64748B' },
-  ];
-
-  const districtData = [
-    { district: 'Ranchi', count: 46 },
-    { district: 'Dhanbad', count: 32 },
-    { district: 'E. Singhbhum', count: 28 },
-    { district: 'Bokaro', count: 18 },
-    { district: 'Hazaribagh', count: 12 },
-    { district: 'Deoghar', count: 9 },
-  ];
-
-  const universityBreakdown = [
-    { name: 'BIT Mesra', count: 52, depts: 'CSE, Civil, ECE, EEE' },
-    { name: 'IIT (ISM) Dhanbad', count: 41, depts: 'Mining, Env Science, CSE, Electronics' },
-    { name: 'NIT Jamshedpur', count: 34, depts: 'Civil, Electrical, Mech, CSE' },
-    { name: 'BAU Ranchi', count: 27, depts: 'Agri Eng, Soil & Water, Agronomy, Crop Science' },
-  ];
-
-  const activeProjectsCount = problems.filter(p => 
-    ['university_adopted', 'team_formed', 'solution_development', 'industry_collaboration', 'prototype', 'pilot', 'implementation'].includes(p.status)
-  ).length;
-
-  const completedCount = problems.filter(p => p.status === 'completed').length;
-
   return (
     <div className="space-y-6">
       {/* Header Banner */}
-      <div className="bg-white rounded-lg border border-slate-300 shadow-2xs p-5 flex flex-wrap items-center justify-between gap-3">
-        <div className="flex items-center space-x-3">
-          <div className="w-12 h-12 rounded-lg bg-gov-navy text-white flex items-center justify-center font-bold">
-            <Building2 className="w-6 h-6 text-gov-saffron-amber" />
+      <div className="bg-white rounded-lg border border-slate-300 shadow-2xs p-5 sm:p-6 flex flex-wrap items-center justify-between gap-4">
+        <div className="flex items-center space-x-4">
+          <div className="w-14 h-14 rounded-lg bg-gov-navy text-white flex items-center justify-center font-bold shrink-0 shadow-xs">
+            <Building2 className="w-7 h-7 text-gov-saffron-amber" />
           </div>
           <div>
             <div className="flex items-center space-x-2">
-              <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-amber-100 text-amber-900 border border-amber-300 uppercase">
+              <span className="text-xs font-bold px-2.5 py-0.5 rounded bg-amber-100 text-amber-900 border border-amber-300 uppercase tracking-wide">
                 Urban Development & Housing Department
               </span>
-              <span className="text-xs text-slate-400 font-mono">STATE MONITORING DESK</span>
+              <span className="text-xs text-slate-500 font-mono">STATE MONITORING DESK</span>
             </div>
-            <h2 className="text-xl font-bold text-gov-navy mt-0.5">
+            <h1 className="gov-h1 mt-1">
               {currentUser.name}
-            </h2>
-            <p className="text-xs text-slate-500">
+            </h1>
+            <p className="gov-body text-slate-600 mt-1">
               Statewide R&D and Public Works Telemetry • Read-Only Analytics Layer
             </p>
           </div>
         </div>
 
-        <div className="flex items-center space-x-2 text-xs">
-          <span className="px-3 py-1 bg-emerald-50 text-emerald-800 border border-emerald-300 rounded font-bold">
+        <div className="flex items-center space-x-2">
+          <span className="px-3.5 py-1.5 bg-emerald-50 text-emerald-800 border border-emerald-300 rounded-md gov-label">
             All ULBs & Institutions Connected
           </span>
         </div>
       </div>
 
       {/* Navigation Tabs (Strictly 2 Items) */}
-      <nav className="bg-white rounded-md border border-slate-200 p-1 flex flex-wrap gap-1" aria-label="Government Navigation">
+      <nav className="bg-white rounded-lg border border-slate-200 p-1.5 flex flex-wrap gap-2" aria-label="Government Navigation">
         <button
           onClick={() => handleTabChange('monitoring', '/government')}
-          className={`py-2 px-4 rounded text-xs font-semibold flex items-center space-x-2 transition ${
+          className={`py-2.5 px-5 rounded-md gov-button flex items-center space-x-2 transition ${
             activeTab === 'monitoring'
-              ? 'bg-gov-navy text-white font-bold'
+              ? 'bg-gov-navy text-white font-bold shadow-xs'
               : 'text-slate-700 hover:bg-slate-100'
           }`}
         >
@@ -323,15 +264,15 @@ export const GovDashboard: React.FC = () => {
 
         <button
           onClick={() => handleTabChange('projects', '/government/projects')}
-          className={`py-2 px-4 rounded text-xs font-semibold flex items-center space-x-2 transition ${
+          className={`py-2.5 px-5 rounded-md gov-button flex items-center space-x-2 transition ${
             activeTab === 'projects'
-              ? 'bg-gov-navy text-white font-bold'
+              ? 'bg-gov-navy text-white font-bold shadow-xs'
               : 'text-slate-700 hover:bg-slate-100'
           }`}
         >
           <Layers className="w-4 h-4 text-emerald-400" />
           <span>{t('Project Monitoring', 'परियोजना निगरानी')}</span>
-          <span className="ml-1.5 px-2 py-0.2 bg-blue-100 text-gov-navy rounded-full text-[10px] font-bold">
+          <span className="ml-2 px-2.5 py-0.5 bg-blue-100 text-gov-navy rounded-full text-xs font-bold">
             {problems.length}
           </span>
         </button>
@@ -341,121 +282,7 @@ export const GovDashboard: React.FC = () => {
       {/* VIEW 1: MONITORING                                  */}
       {/* ==================================================== */}
       {activeTab === 'monitoring' && (
-        <div className="space-y-6">
-          {/* Executive KPI Grid */}
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
-            <div className="bg-white p-4 rounded-lg border border-slate-200 shadow-2xs">
-              <span className="text-[10px] uppercase font-bold text-slate-500">Total Problems</span>
-              <div className="text-2xl font-black text-gov-navy mt-1 font-mono">{problems.length}</div>
-              <span className="text-[10px] text-slate-400">Citizen submitted</span>
-            </div>
-
-            <div className="bg-white p-4 rounded-lg border border-slate-200 shadow-2xs">
-              <span className="text-[10px] uppercase font-bold text-blue-700">Active R&D Projects</span>
-              <div className="text-2xl font-black text-blue-900 mt-1 font-mono">{activeProjectsCount}</div>
-              <span className="text-[10px] text-blue-700 font-semibold">In university pipeline</span>
-            </div>
-
-            <div className="bg-white p-4 rounded-lg border border-slate-200 shadow-2xs">
-              <span className="text-[10px] uppercase font-bold text-amber-700">Industry Partnerships</span>
-              <div className="text-2xl font-black text-amber-800 mt-1 font-mono">
-                {problems.filter(p => p.industryPartnerName).length}
-              </div>
-              <span className="text-[10px] text-amber-700 font-semibold">CSR & hardware backed</span>
-            </div>
-
-            <div className="bg-white p-4 rounded-lg border border-slate-200 shadow-2xs">
-              <span className="text-[10px] uppercase font-bold text-emerald-700">Completed Solutions</span>
-              <div className="text-2xl font-black text-emerald-800 mt-1 font-mono">{completedCount}</div>
-              <span className="text-[10px] text-emerald-700 font-semibold">Deployed on ground</span>
-            </div>
-
-            <div className="bg-white p-4 rounded-lg border border-slate-200 shadow-2xs col-span-2 lg:col-span-1">
-              <span className="text-[10px] uppercase font-bold text-purple-700">Citizens Impacted</span>
-              <div className="text-2xl font-black text-purple-900 mt-1 font-mono">128,400+</div>
-              <span className="text-[10px] text-purple-600 font-semibold">Measurable relief</span>
-            </div>
-          </div>
-
-          {/* Visualizations: Domain Distribution & District Breakdown */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Domain Distribution */}
-            <div className="bg-white rounded-lg border border-slate-200 p-5 space-y-3 shadow-2xs">
-              <div className="border-b border-slate-100 pb-2">
-                <h3 className="text-sm font-bold text-gov-navy">Grievance Distribution by Technical Domain</h3>
-                <p className="text-[11px] text-slate-500">Breakdown across urban, agricultural, and industrial infrastructure</p>
-              </div>
-
-              <div className="h-56 w-full flex items-center justify-center">
-                <ResponsiveContainer width="100%" height="100%">
-                  <PieChart>
-                    <Pie
-                      data={domainData}
-                      cx="50%"
-                      cy="50%"
-                      outerRadius={75}
-                      innerRadius={42}
-                      dataKey="value"
-                      paddingAngle={3}
-                    >
-                      {domainData.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={entry.color} />
-                      ))}
-                    </Pie>
-                    <Tooltip />
-                  </PieChart>
-                </ResponsiveContainer>
-              </div>
-
-              <div className="grid grid-cols-2 gap-2 text-xs">
-                {domainData.map(item => (
-                  <div key={item.name} className="flex items-center space-x-2">
-                    <span className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: item.color }}></span>
-                    <span className="text-slate-600 truncate">{item.name}</span>
-                    <span className="font-bold text-slate-900 font-mono ml-auto">{item.value}%</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* District Volumes */}
-            <div className="bg-white rounded-lg border border-slate-200 p-5 space-y-3 shadow-2xs">
-              <div className="border-b border-slate-100 pb-2">
-                <h3 className="text-sm font-bold text-gov-navy">Reported Problem Volumes by District</h3>
-                <p className="text-[11px] text-slate-500">Active municipal jurisdictions monitored</p>
-              </div>
-
-              <div className="h-64 w-full pt-2">
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={districtData} margin={{ top: 10, right: 20, left: -10, bottom: 20 }}>
-                    <XAxis dataKey="district" tick={{ fontSize: 11 }} />
-                    <YAxis tick={{ fontSize: 11 }} />
-                    <Tooltip />
-                    <Bar dataKey="count" fill="#1B365D" radius={[3, 3, 0, 0]} />
-                  </BarChart>
-                </ResponsiveContainer>
-              </div>
-            </div>
-          </div>
-
-          {/* Institutional Participation Grid */}
-          <div className="bg-white rounded-lg border border-slate-200 p-5 space-y-3 shadow-2xs">
-            <div className="border-b border-slate-100 pb-2">
-              <h3 className="text-sm font-bold text-gov-navy">University & Department R&D Participation</h3>
-              <p className="text-[11px] text-slate-500">Real-time breakdown of institutional capability utilization across the 4 state institutions</p>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
-              {universityBreakdown.map(u => (
-                <div key={u.name} className="p-3 bg-slate-50 rounded border border-slate-200 space-y-1">
-                  <span className="font-bold text-gov-navy text-sm block">{u.name}</span>
-                  <div className="text-slate-600 text-[11px]">Active Departments: {u.depts}</div>
-                  <div className="text-gov-navy font-bold font-mono pt-1 text-sm">{u.count} Problems Routed</div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
+        <RegionalProblemIntelligence problems={problems} />
       )}
 
       {/* ==================================================== */}
@@ -463,73 +290,73 @@ export const GovDashboard: React.FC = () => {
       {/* ==================================================== */}
       {activeTab === 'projects' && (
         <div className="space-y-4">
-          <div className="bg-white p-4 rounded-md border border-slate-200">
-            <h2 className="text-base font-bold text-gov-navy">Statewide Project Monitoring ({problems.length})</h2>
-            <p className="text-xs text-slate-600 mt-0.5">
+          <div className="bg-white p-5 rounded-lg border border-slate-200">
+            <h2 className="gov-h2">Statewide Project Monitoring ({problems.length})</h2>
+            <p className="gov-body text-slate-600 mt-1">
               Read-only telemetry table for all problems across the 11-stage innovation pipeline. Click any row to view full project telemetry.
             </p>
           </div>
 
-          <div className="bg-white rounded-md border border-slate-200 overflow-hidden shadow-2xs">
+          <div className="bg-white rounded-lg border border-slate-200 overflow-hidden shadow-2xs">
             <div className="overflow-x-auto">
-              <table className="w-full text-left text-xs border-collapse">
+              <table className="w-full text-left border-collapse">
                 <thead>
-                  <tr className="bg-slate-100 border-b border-slate-200 text-slate-700 font-bold">
-                    <th className="p-3">Problem ID & Title</th>
-                    <th className="p-3">University & Department</th>
-                    <th className="p-3">Research Team</th>
-                    <th className="p-3">Industry Partner</th>
-                    <th className="p-3">Current Stage</th>
-                    <th className="p-3">Progress</th>
-                    <th className="p-3 text-right">Details</th>
+                  <tr className="bg-slate-100 border-b border-slate-200 text-slate-800">
+                    <th className="p-3.5 sm:p-4 gov-table-th">Problem ID & Title</th>
+                    <th className="p-3.5 sm:p-4 gov-table-th">University & Department</th>
+                    <th className="p-3.5 sm:p-4 gov-table-th">Research Team</th>
+                    <th className="p-3.5 sm:p-4 gov-table-th">Industry Partner</th>
+                    <th className="p-3.5 sm:p-4 gov-table-th">Current Stage</th>
+                    <th className="p-3.5 sm:p-4 gov-table-th">Progress</th>
+                    <th className="p-3.5 sm:p-4 gov-table-th text-right">Details</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-200">
                   {problems.map(prob => (
                     <tr key={prob.id} className="hover:bg-slate-50 transition">
-                      <td className="p-3">
-                        <span className="font-mono font-bold text-gov-navy block">{prob.id}</span>
-                        <span className="font-semibold text-slate-900 line-clamp-1">{prob.title}</span>
-                        <span className="text-[11px] text-slate-500">{prob.panchayatOrLocality}, {prob.district}</span>
+                      <td className="p-3.5 sm:p-4">
+                        <span className="gov-id font-bold text-gov-navy block">{prob.id}</span>
+                        <span className="font-semibold text-slate-900 line-clamp-1 mt-0.5">{prob.title}</span>
+                        <span className="gov-helper block mt-0.5">{prob.panchayatOrLocality}, {prob.district}</span>
                       </td>
 
-                      <td className="p-3">
+                      <td className="p-3.5 sm:p-4 gov-table-td">
                         <strong className="text-slate-800 block">{prob.matchedUniversity || 'BIT Mesra'}</strong>
-                        <span className="text-slate-500 text-[11px]">{prob.matchedDepartment || 'Civil Eng'}</span>
+                        <span className="gov-helper">{prob.matchedDepartment || 'Civil Eng'}</span>
                       </td>
 
-                      <td className="p-3">
+                      <td className="p-3.5 sm:p-4 gov-table-td">
                         <span className="font-medium text-slate-900 block">{prob.teamName || 'Engineering Team'}</span>
-                        <span className="text-slate-500 text-[11px]">Mentor: {prob.facultyMentorName || 'Prof. Rajiv Sharma'}</span>
+                        <span className="gov-helper">Mentor: {prob.facultyMentorName || 'Prof. Rajiv Sharma'}</span>
                       </td>
 
-                      <td className="p-3">
+                      <td className="p-3.5 sm:p-4 gov-table-td">
                         <span className="font-medium text-slate-900 block">{prob.industryPartnerName || 'Tata Steel CSR'}</span>
-                        <span className="text-slate-500 text-[11px]">Co-Creation Support</span>
+                        <span className="gov-helper">Co-Creation Support</span>
                       </td>
 
-                      <td className="p-3">
-                        <span className="px-2 py-0.5 rounded font-bold uppercase text-[10px] bg-blue-100 text-gov-navy border border-blue-200">
+                      <td className="p-3.5 sm:p-4">
+                        <span className="gov-badge uppercase bg-blue-100 text-gov-navy border border-blue-200 inline-block">
                           {prob.status.replace('_', ' ')}
                         </span>
-                        <span className="text-[11px] text-slate-500 block mt-0.5 truncate max-w-[150px]">
+                        <span className="gov-helper block mt-1 truncate max-w-[170px]">
                           {prob.currentMilestoneTitle || 'Solution Dev'}
                         </span>
                       </td>
 
-                      <td className="p-3 font-mono font-bold text-slate-800">
+                      <td className="p-3.5 sm:p-4 font-mono font-bold text-slate-800 gov-table-td">
                         {prob.progressPercentage || 50}%
                       </td>
 
-                      <td className="p-3 text-right">
+                      <td className="p-3.5 sm:p-4 text-right">
                         <button
                           onClick={() => {
                             setSelectedProblem(prob);
                             setIsDetailOpen(true);
                           }}
-                          className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-800 font-semibold rounded text-xs flex items-center space-x-1 ml-auto shadow-2xs"
+                          className="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-lg gov-button flex items-center space-x-1.5 ml-auto shadow-2xs transition"
                         >
-                          <Eye className="w-3.5 h-3.5" />
+                          <Eye className="w-4 h-4" />
                           <span>View Details</span>
                         </button>
                       </td>

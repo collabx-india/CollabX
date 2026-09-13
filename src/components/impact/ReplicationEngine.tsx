@@ -6,11 +6,6 @@ import {
   Sparkles, 
   MapPin, 
   Users, 
-  CheckCircle2, 
-  ArrowRight, 
-  FileText, 
-  AlertTriangle,
-  Building2,
   Copy
 } from 'lucide-react';
 
@@ -20,10 +15,10 @@ export const ReplicationEngine: React.FC = () => {
   const [dossierCandidate, setDossierCandidate] = useState<ReplicationCandidate | null>(null);
 
   const handleConsiderReplication = (cand: ReplicationCandidate) => {
-    cand.status = 'under_consideration';
-    storageService.saveReplication(cand);
+    const updatedCand: ReplicationCandidate = { ...cand, status: 'under_consideration' };
+    storageService.saveReplication(updatedCand);
     setCandidates([...storageService.getReplications()]);
-    setDossierCandidate(cand);
+    setDossierCandidate(updatedCand);
   };
 
   return (
@@ -53,11 +48,11 @@ export const ReplicationEngine: React.FC = () => {
           >
             <div className="space-y-2 text-xs">
               <div className="flex items-center justify-between">
-                <span className="font-mono text-[11px] font-bold text-slate-500 bg-slate-100 px-2 py-0.5 rounded">
+                <span className="font-mono text-xs sm:text-sm font-bold text-slate-700 bg-slate-100 px-2.5 py-0.5 rounded border border-slate-200">
                   {cand.id}
                 </span>
                 <span
-                  className={`px-2 py-0.5 rounded font-bold uppercase text-[10px] ${
+                  className={`px-2.5 py-0.5 rounded font-bold uppercase text-xs ${
                     cand.priority === 'Critical'
                       ? 'bg-red-100 text-red-800'
                       : 'bg-amber-100 text-amber-800'
@@ -69,14 +64,14 @@ export const ReplicationEngine: React.FC = () => {
 
               <h3 className="text-sm font-bold text-gov-navy">{cand.hotspotName}</h3>
 
-              <div className="flex items-center space-x-1 text-slate-500 text-[11px]">
+              <div className="flex items-center space-x-1 text-slate-600 text-xs">
                 <MapPin className="w-3.5 h-3.5 text-gov-saffron" />
                 <span>District: <span className="font-bold text-slate-700">{cand.district}</span></span>
               </div>
 
               {/* Similarity Bar */}
               <div className="p-2.5 bg-blue-50/70 rounded border border-blue-200 space-y-1">
-                <div className="flex items-center justify-between font-bold text-gov-navy text-[11px]">
+                <div className="flex items-center justify-between font-bold text-gov-navy text-xs">
                   <span>Hydraulic Problem Match:</span>
                   <span className="font-mono text-xs text-gov-blue">{cand.similarityPercentage}%</span>
                 </div>
@@ -121,7 +116,7 @@ export const ReplicationEngine: React.FC = () => {
           <div className="bg-white rounded-lg border border-gov-border shadow-gov-lg max-w-lg w-full p-6 space-y-4">
             <div className="border-b border-gov-border pb-3 flex items-center justify-between">
               <div>
-                <span className="text-[10px] font-bold text-gov-green uppercase tracking-wider">
+                <span className="text-xs font-semibold text-gov-green uppercase tracking-wider block">
                   Automated Replication Blueprint
                 </span>
                 <h3 className="text-base font-bold text-gov-navy">

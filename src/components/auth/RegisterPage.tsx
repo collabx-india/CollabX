@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { collabxApi } from '../../services/collabxApi';
 import { UserRole } from '../../types';
@@ -37,9 +37,20 @@ export const RegisterPage: React.FC = () => {
   const [isRegistered, setIsRegistered] = useState(false);
   const [registeredData, setRegisteredData] = useState<{ name: string; identifier: string; role: UserRole } | null>(null);
 
-  useEffect(() => {
-    setError('');
-  }, [category, academicRole, restrictedRole]);
+  const selectCategory = (cat: AccountTypeCategory) => {
+    setCategory(cat);
+    if (error) setError('');
+  };
+
+  const selectAcademicRole = (role: 'student' | 'professor') => {
+    setAcademicRole(role);
+    if (error) setError('');
+  };
+
+  const selectRestrictedRole = (role: 'government' | 'expert') => {
+    setRestrictedRole(role);
+    if (error) setError('');
+  };
 
   // Mobile number input handler - digits only, max 10
   const handleMobileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -226,7 +237,7 @@ export const RegisterPage: React.FC = () => {
               <div className="grid grid-cols-2 gap-2 text-xs font-semibold">
                 <button
                   type="button"
-                  onClick={() => setCategory('citizen')}
+                  onClick={() => selectCategory('citizen')}
                   className={`p-3 rounded-lg border text-left flex items-center space-x-2.5 transition ${
                     category === 'citizen'
                       ? 'bg-blue-50/80 border-gov-blue text-gov-navy font-bold shadow-xs'
@@ -239,7 +250,7 @@ export const RegisterPage: React.FC = () => {
 
                 <button
                   type="button"
-                  onClick={() => setCategory('university')}
+                  onClick={() => selectCategory('university')}
                   className={`p-3 rounded-lg border text-left flex items-center space-x-2.5 transition ${
                     category === 'university'
                       ? 'bg-blue-50/80 border-gov-blue text-gov-navy font-bold shadow-xs'
@@ -252,7 +263,7 @@ export const RegisterPage: React.FC = () => {
 
                 <button
                   type="button"
-                  onClick={() => setCategory('industry')}
+                  onClick={() => selectCategory('industry')}
                   className={`p-3 rounded-lg border text-left flex items-center space-x-2.5 transition ${
                     category === 'industry'
                       ? 'bg-emerald-50/80 border-emerald-600 text-emerald-950 font-bold shadow-xs'
@@ -265,7 +276,7 @@ export const RegisterPage: React.FC = () => {
 
                 <button
                   type="button"
-                  onClick={() => setCategory('government')}
+                  onClick={() => selectCategory('government')}
                   className={`p-3 rounded-lg border text-left flex items-center space-x-2.5 transition ${
                     category === 'government'
                       ? 'bg-amber-50/80 border-amber-500 text-amber-950 font-bold shadow-xs'
@@ -287,7 +298,7 @@ export const RegisterPage: React.FC = () => {
                 <div className="flex space-x-2 text-xs font-semibold">
                   <button
                     type="button"
-                    onClick={() => setAcademicRole('student')}
+                    onClick={() => selectAcademicRole('student')}
                     className={`flex-1 py-1.5 rounded text-center transition ${
                       academicRole === 'student'
                         ? 'bg-white text-gov-navy shadow-xs border border-slate-300 font-bold'
@@ -298,7 +309,7 @@ export const RegisterPage: React.FC = () => {
                   </button>
                   <button
                     type="button"
-                    onClick={() => setAcademicRole('professor')}
+                    onClick={() => selectAcademicRole('professor')}
                     className={`flex-1 py-1.5 rounded text-center transition ${
                       academicRole === 'professor'
                         ? 'bg-white text-gov-navy shadow-xs border border-slate-300 font-bold'
@@ -320,7 +331,7 @@ export const RegisterPage: React.FC = () => {
                 <div className="flex space-x-2 text-xs font-semibold">
                   <button
                     type="button"
-                    onClick={() => setRestrictedRole('government')}
+                    onClick={() => selectRestrictedRole('government')}
                     className={`flex-1 py-1.5 rounded text-center transition ${
                       restrictedRole === 'government'
                         ? 'bg-amber-100 text-amber-950 shadow-xs border border-amber-300 font-bold'
@@ -331,7 +342,7 @@ export const RegisterPage: React.FC = () => {
                   </button>
                   <button
                     type="button"
-                    onClick={() => setRestrictedRole('expert')}
+                    onClick={() => selectRestrictedRole('expert')}
                     className={`flex-1 py-1.5 rounded text-center transition ${
                       restrictedRole === 'expert'
                         ? 'bg-purple-100 text-purple-950 shadow-xs border border-purple-300 font-bold'

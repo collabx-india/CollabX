@@ -70,11 +70,11 @@ export const ChallengeExplorer: React.FC<ChallengeExplorerProps> = ({
           <div>
             <div className="flex items-center space-x-2">
               <Target className="w-5 h-5 text-gov-navy" />
-              <h2 className="text-base font-bold text-gov-navy">
+              <h2 className="gov-h2 text-gov-navy">
                 {t('State Public Challenges Directory', 'राज्य स्तरीय सार्वजनिक चुनौतियां')}
               </h2>
             </div>
-            <p className="text-xs text-slate-600 mt-0.5">
+            <p className="gov-body text-slate-600 mt-0.5">
               {t(
                 'Verified civic problem statements open for university research proposals and technical contributions.',
                 'विश्वविद्यालय शोध प्रस्तावों के लिए खुली नागरिक समस्याएं।'
@@ -89,7 +89,7 @@ export const ChallengeExplorer: React.FC<ChallengeExplorerProps> = ({
               placeholder={t('Search challenges...', 'चुनौतियाँ खोजें...')}
               value={searchTerm}
               onChange={e => setSearchTerm(e.target.value)}
-              className="w-full pl-9 pr-3 py-1.5 text-xs border border-slate-300 rounded focus:outline-none focus:ring-1 focus:ring-gov-navy"
+              className="w-full pl-9 pr-3 py-1.5 text-sm border border-slate-300 rounded focus:outline-none focus:ring-1 focus:ring-gov-navy"
             />
           </div>
         </div>
@@ -98,7 +98,7 @@ export const ChallengeExplorer: React.FC<ChallengeExplorerProps> = ({
         <div className="flex flex-wrap gap-2 pt-2 border-t border-slate-200">
           <button
             onClick={() => setActiveFilter('all')}
-            className={`px-3 py-1 text-xs rounded border transition ${
+            className={`px-3 py-1 text-xs sm:text-sm rounded border transition ${
               activeFilter === 'all'
                 ? 'bg-gov-navy text-white border-gov-navy font-semibold'
                 : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'
@@ -108,7 +108,7 @@ export const ChallengeExplorer: React.FC<ChallengeExplorerProps> = ({
           </button>
           <button
             onClick={() => setActiveFilter('ranchi')}
-            className={`px-3 py-1 text-xs rounded border transition ${
+            className={`px-3 py-1 text-xs sm:text-sm rounded border transition ${
               activeFilter === 'ranchi'
                 ? 'bg-gov-navy text-white border-gov-navy font-semibold'
                 : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'
@@ -118,7 +118,7 @@ export const ChallengeExplorer: React.FC<ChallengeExplorerProps> = ({
           </button>
           <button
             onClick={() => setActiveFilter('funding')}
-            className={`px-3 py-1 text-xs rounded border transition ${
+            className={`px-3 py-1 text-xs sm:text-sm rounded border transition ${
               activeFilter === 'funding'
                 ? 'bg-gov-navy text-white border-gov-navy font-semibold'
                 : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'
@@ -128,7 +128,7 @@ export const ChallengeExplorer: React.FC<ChallengeExplorerProps> = ({
           </button>
           <button
             onClick={() => setActiveFilter('support')}
-            className={`px-3 py-1 text-xs rounded border transition ${
+            className={`px-3 py-1 text-xs sm:text-sm rounded border transition ${
               activeFilter === 'support'
                 ? 'bg-gov-navy text-white border-gov-navy font-semibold'
                 : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'
@@ -149,20 +149,20 @@ export const ChallengeExplorer: React.FC<ChallengeExplorerProps> = ({
             {/* Top Meta */}
             <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-200 pb-3">
               <div className="flex items-center space-x-2">
-                <span className="font-mono text-xs font-bold bg-slate-100 text-gov-navy px-2.5 py-0.5 rounded border border-slate-200">
+                <span className="gov-id bg-slate-100 text-gov-navy px-2.5 py-0.5 rounded border border-slate-200">
                   {challenge.id}
                 </span>
-                <span className="text-xs font-semibold text-slate-600">
+                <span className="text-xs sm:text-sm font-semibold text-slate-600">
                   Category: {challenge.domain}
                 </span>
               </div>
 
               <div className="flex items-center space-x-2">
-                <span className={`text-xs px-2 py-0.5 rounded border font-semibold ${getSupportBadgeStyle(challenge.supportStatus)}`}>
+                <span className={`gov-badge px-2 py-0.5 rounded border font-semibold ${getSupportBadgeStyle(challenge.supportStatus)}`}>
                   {challenge.supportStatus}
                 </span>
 
-                <span className="text-xs text-slate-500 flex items-center space-x-1">
+                <span className="text-xs sm:text-sm text-slate-500 flex items-center space-x-1">
                   <Clock className="w-3.5 h-3.5" />
                   <span>Deadline: {challenge.deadline}</span>
                 </span>
@@ -172,22 +172,22 @@ export const ChallengeExplorer: React.FC<ChallengeExplorerProps> = ({
             {/* Title & Summary */}
             <div className="space-y-2">
               <div className="flex items-start justify-between gap-4">
-                <h3 className="text-base font-bold text-gov-navy">
+                <h3 className="gov-h3 text-gov-navy">
                   {challenge.title}
                 </h3>
-                <span className="text-xs bg-slate-100 text-slate-700 px-2 py-0.5 rounded font-mono flex-shrink-0">
+                <span className="gov-id bg-slate-100 text-slate-700 px-2 py-0.5 rounded flex-shrink-0">
                   {challenge.district}
                 </span>
               </div>
-              <p className="text-xs sm:text-sm text-slate-700 leading-relaxed">
+              <p className="gov-body text-slate-700 leading-relaxed">
                 {challenge.summary}
               </p>
             </div>
 
             {/* Expected Outcomes & Required Skills */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 p-3 bg-slate-50 rounded border border-slate-200 text-xs">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 p-3 bg-slate-50 rounded border border-slate-200 text-sm">
               <div>
-                <span className="font-bold text-slate-800 uppercase text-[10px] tracking-wider block mb-1">
+                <span className="gov-label text-slate-800 uppercase tracking-wider block mb-1">
                   Expected Technical Outcome:
                 </span>
                 <ul className="space-y-1 text-slate-600">
@@ -201,12 +201,12 @@ export const ChallengeExplorer: React.FC<ChallengeExplorerProps> = ({
               </div>
 
               <div>
-                <span className="font-bold text-slate-800 uppercase text-[10px] tracking-wider block mb-1">
+                <span className="gov-label text-slate-800 uppercase tracking-wider block mb-1">
                   Required Expertise Disciplines:
                 </span>
                 <div className="flex flex-wrap gap-1">
                   {challenge.skillsRequired.map(s => (
-                    <span key={s} className="px-2 py-0.5 bg-white border border-slate-300 rounded text-[10px] font-semibold text-slate-700">
+                    <span key={s} className="gov-badge px-2 py-0.5 bg-white border border-slate-300 rounded font-semibold text-slate-700">
                       {s}
                     </span>
                   ))}
@@ -215,14 +215,14 @@ export const ChallengeExplorer: React.FC<ChallengeExplorerProps> = ({
             </div>
 
             {/* Pilot Opportunity */}
-            <div className="text-xs text-slate-600 flex items-center space-x-2">
+            <div className="text-xs sm:text-sm text-slate-600 flex items-center space-x-2">
               <span className="font-bold text-gov-navy">Field Testing Scope:</span>
               <span>{challenge.pilotOpportunity}</span>
             </div>
 
             {/* Actions Bar */}
             <div className="pt-3 border-t border-slate-200 flex flex-wrap items-center justify-between gap-2">
-              <div className="text-xs text-slate-500 font-medium">
+              <div className="text-xs sm:text-sm text-slate-500 font-medium">
                 Submitted Proposals: <span className="font-bold text-gov-navy">{challenge.proposalsCount} University Teams</span>
               </div>
 
@@ -230,7 +230,7 @@ export const ChallengeExplorer: React.FC<ChallengeExplorerProps> = ({
                 {challenge.selectedIdeaId && onSelectChallengeForProject && (
                   <button
                     onClick={() => onSelectChallengeForProject(challenge.id)}
-                    className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-gov-navy rounded text-xs font-semibold flex items-center space-x-1 border border-slate-300"
+                    className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-gov-navy rounded text-xs sm:text-sm font-semibold flex items-center space-x-1 border border-slate-300"
                   >
                     <span>View Project Workspace</span>
                     <ChevronRight className="w-3.5 h-3.5" />
@@ -239,7 +239,7 @@ export const ChallengeExplorer: React.FC<ChallengeExplorerProps> = ({
 
                 <button
                   onClick={() => handleOpenSubmit(challenge)}
-                  className="px-4 py-1.5 bg-gov-navy hover:bg-slate-800 text-white rounded text-xs font-semibold flex items-center space-x-1.5 transition"
+                  className="px-4 py-1.5 bg-gov-navy hover:bg-slate-800 text-white rounded text-xs sm:text-sm font-semibold flex items-center space-x-1.5 transition"
                 >
                   <FileText className="w-3.5 h-3.5" />
                   <span>{t('Submit Proposal', 'प्रस्ताव जमा करें')}</span>

@@ -2,31 +2,18 @@ import React, { useState } from 'react';
 import { Project, ProjectTask, ProjectMilestone } from '../../types';
 import { storageService } from '../../services/storageService';
 import { useAuth } from '../../context/AuthContext';
-import { useAccessibility } from '../../context/AccessibilityContext';
 import { collabxApi } from '../../services/collabxApi';
 import { 
-  Layers, 
   CheckCircle2, 
-  Clock, 
-  Calendar, 
   FileText, 
-  Users, 
-  Building, 
-  Activity, 
   Plus, 
   Check, 
   Download, 
-  Send,
-  Droplets,
-  Award,
-  Sparkles,
-  ShieldCheck,
-  AlertCircle
+  Droplets
 } from 'lucide-react';
 
 export const SharedWorkspace: React.FC = () => {
   const { currentUser } = useAuth();
-  const { t } = useAccessibility();
 
   const [project, setProject] = useState<Project>(() => storageService.getProjects()[0]);
   const [activeSection, setActiveSection] = useState<'overview' | 'milestones' | 'tasks' | 'testing' | 'docs'>('overview');
@@ -56,9 +43,8 @@ export const SharedWorkspace: React.FC = () => {
     });
 
     const updatedProject = { ...project, tasks: updatedTasks };
-    project.tasks = updatedTasks;
     storageService.saveProject(updatedProject);
-    setProject({ ...updatedProject });
+    setProject(updatedProject);
   };
 
   const handleMilestoneStatus = async (milestone: ProjectMilestone) => {
@@ -129,23 +115,23 @@ export const SharedWorkspace: React.FC = () => {
         </div>
 
         {/* Tri-Partite Stakeholder Badges */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs sm:text-sm">
           <div className="p-3 bg-slate-50 rounded border border-slate-200">
-            <span className="text-[10px] uppercase font-bold text-gov-navy">University Partner</span>
+            <span className="gov-label uppercase text-gov-navy block">University Partner</span>
             <div className="font-bold text-slate-900 mt-0.5">{project.teamName}</div>
-            <div className="text-[11px] text-slate-600">{project.university}</div>
+            <div className="text-xs text-slate-600">{project.university}</div>
           </div>
 
           <div className="p-3 bg-slate-50 rounded border border-slate-200">
-            <span className="text-[10px] uppercase font-bold text-gov-navy">Industry Sponsor</span>
+            <span className="gov-label uppercase text-gov-navy block">Industry Sponsor</span>
             <div className="font-bold text-slate-900 mt-0.5">{project.industryPartnerName}</div>
-            <div className="text-[11px] text-slate-600">Sensors & Equipment Support</div>
+            <div className="text-xs text-slate-600">Sensors & Equipment Support</div>
           </div>
 
           <div className="p-3 bg-slate-50 rounded border border-slate-200">
-            <span className="text-[10px] uppercase font-bold text-gov-navy">Govt Nodal Officer</span>
+            <span className="gov-label uppercase text-gov-navy block">Govt Nodal Officer</span>
             <div className="font-bold text-slate-900 mt-0.5">{project.nodalOfficerName}</div>
-            <div className="text-[11px] text-slate-600">Ranchi Municipal Corporation</div>
+            <div className="text-xs text-slate-600">Ranchi Municipal Corporation</div>
           </div>
         </div>
       </div>
@@ -154,88 +140,88 @@ export const SharedWorkspace: React.FC = () => {
       <div className="bg-white rounded-md border border-slate-200 p-1 flex flex-wrap gap-1">
         <button
           onClick={() => setActiveSection('overview')}
-          className={`py-2 px-4 rounded text-xs font-semibold transition ${
+          className={`py-2 px-4 rounded text-xs sm:text-sm font-semibold transition ${
             activeSection === 'overview' ? 'bg-gov-navy text-white' : 'text-slate-700 hover:bg-slate-100'
           }`}
         >
-          Project Workspace Overview
+          Overview & Metrics
         </button>
         <button
           onClick={() => setActiveSection('milestones')}
-          className={`py-2 px-4 rounded text-xs font-semibold transition ${
+          className={`py-2 px-4 rounded text-xs sm:text-sm font-semibold transition ${
             activeSection === 'milestones' ? 'bg-gov-navy text-white' : 'text-slate-700 hover:bg-slate-100'
           }`}
         >
-          Milestones ({project.milestones.filter(m => m.status === 'completed').length}/{project.milestones.length})
+          Milestones & Stage Gate
         </button>
         <button
           onClick={() => setActiveSection('tasks')}
-          className={`py-2 px-4 rounded text-xs font-semibold transition ${
+          className={`py-2 px-4 rounded text-xs sm:text-sm font-semibold transition ${
             activeSection === 'tasks' ? 'bg-gov-navy text-white' : 'text-slate-700 hover:bg-slate-100'
           }`}
         >
-          Tasks ({project.tasks.length})
+          Action Items & Tasks
         </button>
         <button
           onClick={() => setActiveSection('testing')}
-          className={`py-2 px-4 rounded text-xs font-bold transition ${
-            activeSection === 'testing' ? 'bg-gov-navy text-white' : 'text-slate-600 hover:bg-slate-100'
+          className={`py-2 px-4 rounded text-xs sm:text-sm font-semibold transition ${
+            activeSection === 'testing' ? 'bg-gov-navy text-white' : 'text-slate-700 hover:bg-slate-100'
           }`}
         >
-          On-Site Testing & Telemetry Log
+          On-Site Telemetry & Tests
         </button>
         <button
           onClick={() => setActiveSection('docs')}
-          className={`py-2 px-4 rounded text-xs font-bold transition ${
-            activeSection === 'docs' ? 'bg-gov-navy text-white' : 'text-slate-600 hover:bg-slate-100'
+          className={`py-2 px-4 rounded text-xs sm:text-sm font-semibold transition ${
+            activeSection === 'docs' ? 'bg-gov-navy text-white' : 'text-slate-700 hover:bg-slate-100'
           }`}
         >
-          Blueprints & Documents ({project.documents.length})
+          Technical Dossiers & NOCs
         </button>
       </div>
 
-      {/* SECTION 1: OVERVIEW & TELEMETRY */}
+      {/* SECTION 1: OVERVIEW & IMPACT */}
       {activeSection === 'overview' && (
-        <div className="space-y-4">
+        <div className="space-y-5">
           {/* Key Pilot Metrics Cards */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
             <div className="bg-white p-4 rounded-lg border border-gov-border shadow-gov">
-              <span className="text-[10px] uppercase font-bold text-slate-500">Waterlogging Duration</span>
+              <span className="gov-label uppercase text-slate-500 block">Waterlogging Duration</span>
               <div className="text-xl font-bold text-gov-navy mt-1">
                 8.0h <span className="text-slate-400 font-normal">→</span>{' '}
                 <span className="text-gov-green font-black">1.5 Hours</span>
               </div>
-              <span className="text-[11px] font-bold text-gov-green mt-0.5 block">
+              <span className="text-xs font-bold text-gov-green mt-0.5 block">
                 ↓ 81.25% Inundation Reduction
               </span>
             </div>
 
             <div className="bg-white p-4 rounded-lg border border-gov-border shadow-gov">
-              <span className="text-[10px] uppercase font-bold text-slate-500">Peak Water Depth</span>
+              <span className="gov-label uppercase text-slate-500 block">Peak Water Depth</span>
               <div className="text-xl font-bold text-gov-navy mt-1">
                 65cm <span className="text-slate-400 font-normal">→</span>{' '}
                 <span className="text-gov-green font-black">12 cm</span>
               </div>
-              <span className="text-[11px] font-bold text-gov-green mt-0.5 block">
+              <span className="text-xs font-bold text-gov-green mt-0.5 block">
                 ↓ 81.5% Depth Reduction
               </span>
             </div>
 
             <div className="bg-white p-4 rounded-lg border border-gov-border shadow-gov">
-              <span className="text-[10px] uppercase font-bold text-slate-500">Ranchi Beneficiaries</span>
+              <span className="gov-label uppercase text-slate-500 block">Ranchi Beneficiaries</span>
               <div className="text-xl font-bold text-gov-navy mt-1 font-mono">45,200+</div>
-              <span className="text-[11px] text-slate-500 mt-0.5 block">
+              <span className="text-xs text-slate-500 mt-0.5 block">
                 Harmu Ward 14 residents + school transit
               </span>
             </div>
 
             <div className="bg-white p-4 rounded-lg border border-gov-border shadow-gov">
-              <span className="text-[10px] uppercase font-bold text-slate-500">Field Prototype Status</span>
+              <span className="gov-label uppercase text-slate-500 block">Field Prototype Status</span>
               <div className="text-lg font-bold text-emerald-700 mt-1 flex items-center space-x-1">
                 <CheckCircle2 className="w-5 h-5 text-gov-green" />
                 <span>Operational</span>
               </div>
-              <span className="text-[11px] text-slate-500 mt-0.5 block">
+              <span className="text-xs text-slate-500 mt-0.5 block">
                 4 Siphon check valves primed
               </span>
             </div>
@@ -291,11 +277,11 @@ export const SharedWorkspace: React.FC = () => {
               >
                 <div className="space-y-1">
                   <div className="flex items-center space-x-2">
-                    <span className="font-mono font-bold text-[10px] text-slate-500 uppercase px-1.5 py-0.2 bg-white rounded border">
+                    <span className="font-mono font-bold text-xs text-slate-500 uppercase px-1.5 py-0.5 bg-white rounded border">
                       Phase {idx + 1}: {m.phase}
                     </span>
                     <span
-                      className={`font-bold text-[10px] px-2 py-0.2 rounded ${
+                      className={`gov-badge px-2 py-0.5 rounded uppercase ${
                         m.status === 'completed'
                           ? 'bg-emerald-100 text-emerald-800'
                           : m.status === 'in_progress'
@@ -308,7 +294,7 @@ export const SharedWorkspace: React.FC = () => {
                   </div>
                   <h4 className="text-sm font-bold text-slate-900">{m.title}</h4>
                   <p className="text-slate-600">{m.description}</p>
-                  <div className="text-[11px] text-slate-500">
+                  <div className="text-xs text-slate-500">
                     Deliverable: <span className="font-semibold text-slate-700">{m.deliverable}</span>
                   </div>
                 </div>
@@ -318,7 +304,7 @@ export const SharedWorkspace: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => void handleMilestoneStatus(m)}
-                    className="mt-2 px-2 py-1 border border-slate-300 rounded text-[10px] font-bold text-slate-700 hover:bg-slate-100"
+                    className="mt-2 px-2.5 py-1 border border-slate-300 rounded text-xs font-bold text-slate-700 hover:bg-slate-100"
                   >
                     {m.status === 'completed' ? 'Reopen milestone' : 'Mark complete'}
                   </button>
@@ -332,7 +318,7 @@ export const SharedWorkspace: React.FC = () => {
         </div>
       )}
 
-      {/* SECTION 3: TASKS KANBAN / LIST */}
+      {/* SECTION 3: TASKS */}
       {activeSection === 'tasks' && (
         <div className="bg-white rounded-lg border border-gov-border shadow-gov p-5 space-y-4">
           <div className="flex items-center justify-between border-b border-slate-100 pb-3">
@@ -354,11 +340,11 @@ export const SharedWorkspace: React.FC = () => {
                 placeholder="Task description..."
                 value={newTaskTitle}
                 onChange={e => setNewTaskTitle(e.target.value)}
-                className="flex-1 p-2 text-xs border border-slate-300 rounded"
+                className="flex-1 p-2 text-xs sm:text-sm border border-slate-300 rounded"
               />
               <button
                 type="submit"
-                className="px-4 py-2 bg-gov-navy text-white text-xs font-bold rounded hover:bg-gov-navy-dark"
+                className="px-4 py-2 bg-gov-navy text-white text-xs sm:text-sm font-bold rounded hover:bg-gov-navy-dark"
               >
                 Save Task
               </button>
@@ -374,7 +360,7 @@ export const SharedWorkspace: React.FC = () => {
                     className={`w-5 h-5 rounded border flex items-center justify-center transition ${
                       task.status === 'done'
                         ? 'bg-gov-green border-gov-green text-white'
-                        : 'border-slate-400 hover:border-gov-navy'
+                        : 'border-slate-300 bg-white hover:border-gov-blue'
                     }`}
                   >
                     {task.status === 'done' && <Check className="w-3.5 h-3.5 stroke-[3]" />}
@@ -384,14 +370,14 @@ export const SharedWorkspace: React.FC = () => {
                     <div className={`font-bold ${task.status === 'done' ? 'line-through text-slate-400' : 'text-slate-800'}`}>
                       {task.title}
                     </div>
-                    <div className="text-[11px] text-slate-500">
+                    <div className="text-xs text-slate-500">
                       Assigned to: <span className="font-semibold text-slate-700">{task.assignee}</span> ({task.role})
                     </div>
                   </div>
                 </div>
 
                 <span
-                  className={`text-[10px] font-bold px-2 py-0.5 rounded uppercase ${
+                  className={`gov-badge px-2 py-0.5 rounded uppercase ${
                     task.priority === 'high' ? 'bg-red-100 text-red-800' : 'bg-slate-100 text-slate-700'
                   }`}
                 >
@@ -408,26 +394,26 @@ export const SharedWorkspace: React.FC = () => {
         <div className="bg-white rounded-lg border border-gov-border shadow-gov p-5 space-y-4 text-xs">
           <div className="border-b border-slate-100 pb-2">
             <h3 className="text-sm font-bold text-gov-navy">Live On-Site Telemetry & Municipal Sensor Feeds</h3>
-            <p className="text-slate-500 text-[11px]">Streamed from Harmu Bypass Siphon Sleeve #4 LoRa Node</p>
+            <p className="text-slate-500 text-xs">Streamed from Harmu Bypass Siphon Sleeve #4 LoRa Node</p>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <div className="p-3 bg-slate-50 rounded border border-slate-200">
-              <span className="text-slate-500 text-[10px] font-bold uppercase">Culvert Water Level</span>
+              <span className="gov-label text-slate-500 uppercase block">Culvert Water Level</span>
               <div className="text-lg font-bold text-gov-navy mt-1">11.4 cm</div>
-              <span className="text-[10px] text-emerald-700 font-semibold">Normal (Baseline 65 cm)</span>
+              <span className="text-xs text-emerald-700 font-semibold">Normal (Baseline 65 cm)</span>
             </div>
 
             <div className="p-3 bg-slate-50 rounded border border-slate-200">
-              <span className="text-slate-500 text-[10px] font-bold uppercase">Siphon Flow Velocity</span>
+              <span className="gov-label text-slate-500 uppercase block">Siphon Flow Velocity</span>
               <div className="text-lg font-bold text-gov-navy mt-1">1,240 L/sec</div>
-              <span className="text-[10px] text-emerald-700 font-semibold">Active Gravitational Evacuation</span>
+              <span className="text-xs text-emerald-700 font-semibold">Active Gravitational Evacuation</span>
             </div>
 
             <div className="p-3 bg-slate-50 rounded border border-slate-200">
-              <span className="text-slate-500 text-[10px] font-bold uppercase">Telemetry Health</span>
+              <span className="gov-label text-slate-500 uppercase block">Telemetry Health</span>
               <div className="text-lg font-bold text-gov-green mt-1">99.8% Uptime</div>
-              <span className="text-[10px] text-slate-500">Solar Battery 13.8V</span>
+              <span className="text-xs text-slate-500">Solar Battery 13.8V</span>
             </div>
           </div>
         </div>
@@ -448,7 +434,7 @@ export const SharedWorkspace: React.FC = () => {
                   <FileText className="w-5 h-5 text-gov-blue" />
                   <div>
                     <div className="font-bold text-slate-800">{doc.name}</div>
-                    <div className="text-[11px] text-slate-500">
+                    <div className="text-xs text-slate-500">
                       {doc.type} • {doc.size} • Uploaded by {doc.uploadedBy} on {doc.date}
                     </div>
                   </div>

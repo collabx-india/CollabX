@@ -78,7 +78,7 @@ export const NotificationDropdown: React.FC<NotificationDropdownProps> = ({
                   <span className={`font-semibold text-slate-800 ${!notif.read ? 'text-gov-navy font-bold' : ''}`}>
                     {notif.title}
                   </span>
-                  <span className="text-[10px] text-slate-400">{notif.timestamp}</span>
+                  <span className="text-xs text-slate-500">{notif.timestamp}</span>
                 </div>
                 <p className="text-slate-600 leading-relaxed">{notif.message}</p>
               </div>
@@ -88,7 +88,7 @@ export const NotificationDropdown: React.FC<NotificationDropdownProps> = ({
       </div>
 
       <div className="bg-slate-50 p-2 text-center border-t border-slate-200">
-        <span className="text-[11px] text-slate-500 font-medium">
+        <span className="text-xs text-slate-600 font-medium">
           {t('In-App GovTech Decision Support System', 'इन-ऐप निर्णय सहायता प्रणाली')}
         </span>
       </div>

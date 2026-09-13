@@ -156,7 +156,7 @@ export const CitizenLoginPage: React.FC = () => {
     <div className="py-8 px-4 sm:px-6 lg:px-8 flex flex-col justify-center max-w-md mx-auto w-full">
       {/* Clean Portal Header */}
       <div className="text-center space-y-2 mb-6">
-        <h1 className="text-2xl font-bold text-slate-900 tracking-tight">
+        <h1 className="gov-h2 text-slate-900 tracking-tight">
           Citizen Login
         </h1>
       </div>
@@ -166,7 +166,7 @@ export const CitizenLoginPage: React.FC = () => {
         {!otpSent ? (
           <>
             {/* Tab Selector: Mobile vs Email */}
-            <div className="flex bg-slate-100 p-1 rounded-lg text-xs font-semibold">
+            <div className="flex bg-slate-100 p-1 rounded-lg text-sm font-semibold">
               <button
                 type="button"
                 onClick={() => {
@@ -179,7 +179,7 @@ export const CitizenLoginPage: React.FC = () => {
                     : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
-                <Phone className="w-3.5 h-3.5 inline mr-1.5" />
+                <Phone className="w-4 h-4 inline mr-1.5" />
                 Mobile Number
               </button>
               <button
@@ -194,13 +194,13 @@ export const CitizenLoginPage: React.FC = () => {
                     : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
-                <Mail className="w-3.5 h-3.5 inline mr-1.5" />
+                <Mail className="w-4 h-4 inline mr-1.5" />
                 Email
               </button>
             </div>
 
             {error && (
-              <div role="alert" className="p-3 bg-red-50 border border-red-200 rounded-md text-xs text-red-700 flex items-center space-x-2">
+              <div role="alert" className="p-3 bg-red-50 border border-red-200 rounded-md text-xs sm:text-sm text-red-700 flex items-center space-x-2">
                 <AlertCircle className="w-4 h-4 text-red-600 flex-shrink-0" />
                 <span>{error}</span>
               </div>
@@ -209,11 +209,11 @@ export const CitizenLoginPage: React.FC = () => {
             <form onSubmit={handleSendOtp} className="space-y-5">
               {authMode === 'mobile' ? (
                 <div>
-                  <label htmlFor="mobile-input" className="block text-xs font-semibold text-slate-700 mb-1">
+                  <label htmlFor="mobile-input" className="gov-label text-slate-700 block mb-1">
                     Mobile Number
                   </label>
                   <div className="relative flex rounded-md shadow-xs">
-                    <span className="inline-flex items-center px-3 rounded-l-md border border-r-0 border-slate-300 bg-slate-50 text-slate-600 text-xs font-mono font-medium">
+                    <span className="inline-flex items-center px-3 rounded-l-md border border-r-0 border-slate-300 bg-slate-50 text-slate-700 text-sm font-mono font-bold">
                       +91
                     </span>
                     <input
@@ -229,13 +229,13 @@ export const CitizenLoginPage: React.FC = () => {
                       onBeforeInput={handleMobileBeforeInput as any}
                       onPaste={handleMobilePaste}
                       required
-                      className="flex-1 min-w-0 block w-full px-3 py-2 text-sm border border-slate-300 rounded-r-md focus:ring-2 focus:ring-gov-blue focus:border-gov-blue font-mono"
+                      className="flex-1 min-w-0 block w-full px-3 py-2 text-base border border-slate-300 rounded-r-md focus:ring-2 focus:ring-gov-blue focus:border-gov-blue font-mono"
                     />
                   </div>
                 </div>
               ) : (
                 <div>
-                  <label htmlFor="email-input" className="block text-xs font-semibold text-slate-700 mb-1">
+                  <label htmlFor="email-input" className="gov-label text-slate-700 block mb-1">
                     Email Address
                   </label>
                   <div className="relative rounded-md shadow-xs">
@@ -246,7 +246,7 @@ export const CitizenLoginPage: React.FC = () => {
                       value={email}
                       onChange={handleEmailChange}
                       required
-                      className="block w-full px-3 py-2 text-sm border border-slate-300 rounded-md focus:ring-2 focus:ring-gov-blue focus:border-gov-blue"
+                      className="block w-full px-3 py-2 text-base border border-slate-300 rounded-md focus:ring-2 focus:ring-gov-blue focus:border-gov-blue"
                     />
                   </div>
                 </div>
@@ -255,7 +255,7 @@ export const CitizenLoginPage: React.FC = () => {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full py-2.5 px-4 rounded-md shadow-xs text-xs font-bold text-white bg-gov-navy hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gov-blue transition disabled:opacity-50"
+                className="w-full py-2.5 px-4 rounded-md shadow-xs font-bold text-white bg-gov-navy hover:bg-slate-800 gov-btn focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gov-blue transition disabled:opacity-50"
               >
                 {isSubmitting ? 'Sending OTP...' : 'Send OTP'}
               </button>
@@ -265,7 +265,7 @@ export const CitizenLoginPage: React.FC = () => {
           /* OTP Screen */
           <div className="space-y-5">
             <div className="text-center space-y-1">
-              <p className="text-xs font-medium text-slate-700">
+              <p className="text-sm font-medium text-slate-700">
                 {authMode === 'mobile'
                   ? 'OTP sent to your registered mobile number.'
                   : 'OTP sent to your registered email address.'}
@@ -273,14 +273,14 @@ export const CitizenLoginPage: React.FC = () => {
               <button
                 type="button"
                 onClick={handleEditContact}
-                className="text-[11px] font-semibold text-gov-blue hover:underline"
+                className="text-xs sm:text-sm font-semibold text-gov-blue hover:underline"
               >
                 Change {authMode === 'mobile' ? 'Mobile Number' : 'Email'}
               </button>
             </div>
 
             {error && (
-              <div role="alert" className="p-3 bg-red-50 border border-red-200 rounded-md text-xs text-red-700 flex items-center space-x-2">
+              <div role="alert" className="p-3 bg-red-50 border border-red-200 rounded-md text-xs sm:text-sm text-red-700 flex items-center space-x-2">
                 <AlertCircle className="w-4 h-4 text-red-600 flex-shrink-0" />
                 <span>{error}</span>
               </div>
@@ -288,7 +288,7 @@ export const CitizenLoginPage: React.FC = () => {
 
             <form onSubmit={handleVerifyOtp} className="space-y-5">
               <div>
-                <label className="block text-xs font-semibold text-slate-700 text-center mb-2">
+                <label className="gov-label text-slate-700 block text-center mb-2">
                   Enter 6-Digit OTP
                 </label>
                 <OtpInput
@@ -307,7 +307,7 @@ export const CitizenLoginPage: React.FC = () => {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full py-2.5 px-4 rounded-md shadow-xs text-xs font-bold text-white bg-gov-navy hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gov-blue transition disabled:opacity-50"
+                className="w-full py-2.5 px-4 rounded-md shadow-xs font-bold text-white bg-gov-navy hover:bg-slate-800 gov-btn focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gov-blue transition disabled:opacity-50"
               >
                 {isSubmitting ? 'Verifying...' : 'Verify OTP'}
               </button>
@@ -316,7 +316,7 @@ export const CitizenLoginPage: React.FC = () => {
         )}
 
         {/* Registration Prompt */}
-        <div className="pt-2 text-center text-xs text-slate-600">
+        <div className="pt-2 text-center text-sm text-slate-600">
           New to CollabX?{' '}
           <button
             type="button"
@@ -331,7 +331,7 @@ export const CitizenLoginPage: React.FC = () => {
         <div className="pt-4 border-t border-slate-100 text-center">
           <Link
             to="/login"
-            className="inline-flex items-center text-xs font-medium text-slate-500 hover:text-slate-800 transition"
+            className="inline-flex items-center text-sm font-medium text-slate-500 hover:text-slate-800 transition"
           >
             <ArrowLeft className="w-3.5 h-3.5 mr-1" /> Back to account type
           </Link>

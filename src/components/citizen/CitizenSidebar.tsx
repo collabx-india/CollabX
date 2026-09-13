@@ -6,11 +6,7 @@ import { storageService } from '../../services/storageService';
 import { 
   Home, 
   PlusCircle, 
-  FileText, 
-  Search, 
-  MapPin, 
-  Bell, 
-  User 
+  FileText
 } from 'lucide-react';
 
 interface CitizenSidebarProps {
@@ -36,13 +32,12 @@ export const CitizenSidebar: React.FC<CitizenSidebarProps> = ({
     p.citizenPhone === (currentUser as any)?.phone
   );
   const displayReports = myReports.length > 0 ? myReports : problems;
-  const notifications = storageService.getNotifications();
 
   // Determine active item based on location.pathname
   const getActiveId = () => {
     const p = location.pathname;
     if (p.endsWith('/report')) return 'report';
-    if (p.endsWith('/reports') || p.endsWith('/track') || p.endsWith('/nearby')) return 'my_reports';
+    if (p.includes('/reports') || p.endsWith('/track') || p.endsWith('/nearby')) return 'my_reports';
     return 'home';
   };
 
@@ -62,12 +57,12 @@ export const CitizenSidebar: React.FC<CitizenSidebarProps> = ({
   return (
     <aside
       id={id}
-      className={`w-full min-w-0 bg-white border border-slate-200 rounded-md p-4 space-y-1.5 flex-shrink-0 shadow-sm ${
+      className={`w-full min-w-0 bg-white border border-slate-200 rounded-md p-4 space-y-2 flex-shrink-0 shadow-sm ${
         isMobileOpen ? 'block' : 'hidden'
       }`}
       aria-label="Citizen Portal Navigation"
     >
-      <div className="px-3 py-1.5 text-[11px] font-bold text-slate-500 uppercase tracking-wider border-b border-slate-200 mb-2">
+      <div className="px-3.5 py-2 text-xs font-bold text-slate-600 uppercase tracking-wider border-b border-slate-200 mb-2">
         Navigation Menu
       </div>
 
@@ -79,18 +74,18 @@ export const CitizenSidebar: React.FC<CitizenSidebarProps> = ({
           <button
             key={item.id}
             onClick={() => handleNavClick(item.path)}
-            className={`w-full py-2.5 px-3.5 rounded text-xs font-semibold flex items-center justify-between transition ${
+            className={`w-full py-3 px-4 rounded-md gov-button flex items-center justify-between transition ${
               isActive
                 ? 'bg-gov-navy text-white shadow-xs font-bold'
                 : 'text-slate-700 hover:bg-slate-100 hover:text-gov-navy'
             }`}
           >
             <div className="flex items-center space-x-3.5 min-w-0">
-              <Icon className={`w-4.5 h-4.5 flex-shrink-0 ${isActive ? 'text-white' : 'text-slate-500'}`} />
-              <span className="text-xs sm:text-sm font-semibold truncate">{item.label}</span>
+              <Icon className={`w-5 h-5 flex-shrink-0 ${isActive ? 'text-white' : 'text-slate-500'}`} />
+              <span className="truncate">{item.label}</span>
             </div>
             {item.count !== undefined && item.count > 0 && (
-              <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold flex-shrink-0 ml-2 ${
+              <span className={`px-2.5 py-0.5 rounded-full text-xs sm:text-sm font-bold flex-shrink-0 ml-2 ${
                 isActive ? 'bg-white text-gov-navy' : 'bg-slate-200 text-slate-700'
               }`}>
                 {item.count}

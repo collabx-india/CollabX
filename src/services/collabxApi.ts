@@ -65,7 +65,7 @@ async function apiRequest<T>(path: string, init: RequestInit = {}): Promise<T> {
   let response: Response;
   try {
     response = await fetch(`${activeBaseUrl}${path}`, { ...init, headers });
-  } catch (error) {
+  } catch {
     // Attempt IPv4 127.0.0.1 fallback if proxy or localhost resolution failed
     if (activeBaseUrl === '/api') {
       try {

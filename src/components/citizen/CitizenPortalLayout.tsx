@@ -29,16 +29,16 @@ export const CitizenPortalLayout: React.FC<CitizenPortalLayoutProps> = ({ childr
   return (
     <div className="space-y-4">
       {/* Official Section Header */}
-      <div className="bg-white rounded-md border border-slate-200 p-3.5 sm:p-4 shadow-sm">
+      <div className="bg-white rounded-md border border-slate-200 p-4 sm:p-5 shadow-sm">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
-            <span className="text-[11px] font-bold text-gov-navy uppercase tracking-wider block">
+            <span className="text-xs font-bold text-gov-navy uppercase tracking-wider block">
               {t('Government of Jharkhand • Grievance & Public Services Portal', 'झारखंड सरकार • शिकायत एवं नागरिक सेवा पोर्टल')}
             </span>
-            <h1 className="text-xl sm:text-2xl font-bold text-gov-navy mt-1">
+            <h1 className="gov-h1 mt-1">
               {t('Citizen Services', 'नागरिक सेवाएं')}
             </h1>
-            <p className="text-xs sm:text-sm text-slate-600 mt-0.5">
+            <p className="gov-body text-slate-600 mt-1">
               {t('Report and track civic issues in your area.', 'अपने क्षेत्र की नागरिक समस्याओं को दर्ज और ट्रैक करें।')}
             </p>
           </div>
@@ -53,9 +53,9 @@ export const CitizenPortalLayout: React.FC<CitizenPortalLayoutProps> = ({ childr
             >
               {isNavOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
-            <div className="text-right text-xs text-slate-600 bg-slate-50 p-2.5 rounded border border-slate-200">
-              <span className="font-semibold text-slate-700">{currentUser.name}</span>
-              <div className="text-[11px] text-slate-500 font-mono">
+            <div className="text-right text-sm text-slate-700 bg-slate-50 p-2.5 rounded border border-slate-200">
+              <span className="font-semibold text-slate-800 block">{currentUser.name}</span>
+              <div className="text-xs sm:text-sm text-slate-600 font-mono">
                 {(currentUser as any).phone || currentUser.email || 'Grievance Registrant'}
               </div>
             </div>

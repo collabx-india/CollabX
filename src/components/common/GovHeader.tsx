@@ -158,13 +158,13 @@ export const GovHeader: React.FC<GovHeaderProps> = ({ onSearch }) => {
 
           <div>
             <div className="flex items-center space-x-2">
-              <span className="text-xs font-bold text-slate-600 tracking-wide uppercase">
+              <span className="text-sm font-bold text-slate-600 tracking-wide uppercase">
                 {t('Government of Jharkhand', 'झारखंड सरकार')}
               </span>
             </div>
-            <h1 className="text-xl sm:text-2xl font-black tracking-tight text-gov-navy font-sans leading-none">
+            <div className="text-xl sm:text-2xl font-black tracking-tight text-gov-navy font-sans leading-none">
               COLLAB<span className="text-gov-saffron">X</span>
-            </h1>
+            </div>
           </div>
         </div>
 
@@ -172,29 +172,29 @@ export const GovHeader: React.FC<GovHeaderProps> = ({ onSearch }) => {
         {!isPublicAuthRoute && (
           <div className="hidden lg:flex flex-1 max-w-md mx-4">
             <div className="relative w-full">
-              <Search className="w-4 h-4 absolute left-3 top-2.5 text-slate-400" />
+              <Search className="w-4 h-4 absolute left-3 top-3 text-slate-400" />
               <input
                 type="text"
                 placeholder={t('Search civic problems, challenges, proposals...', 'समस्याएं, चुनौतियां और प्रस्ताव खोजें...')}
                 value={searchTerm}
                 onChange={handleSearchChange}
-                className="w-full pl-9 pr-4 py-1.5 text-xs bg-slate-50 border border-slate-300 rounded focus:bg-white focus:border-gov-blue focus:ring-1 focus:ring-gov-blue transition"
+                className="w-full pl-9 pr-4 py-2 text-[0.9375rem] text-slate-800 bg-slate-50 border border-slate-300 rounded focus:bg-white focus:border-gov-blue focus:ring-1 focus:ring-gov-blue transition placeholder:text-slate-500"
               />
             </div>
           </div>
         )}
 
         {/* Right Header Actions */}
-        <div className="flex items-center space-x-3 text-xs">
+        <div className="flex items-center space-x-3 text-sm">
           {/* Skip link for Accessibility */}
-          <a href="#main-content" className="sr-only focus:not-sr-only focus:bg-gov-navy focus:text-white px-2 py-1 rounded">
+          <a href="#main-content" className="sr-only focus:not-sr-only focus:bg-gov-navy focus:text-white px-3 py-1.5 rounded text-sm font-semibold">
             {t('Skip to Content', 'सामग्री पर जाएं')}
           </a>
 
           {/* Accessibility Control (PROMINENT ON ALL PAGES) */}
           <button
             onClick={() => setIsAccessModalOpen(true)}
-            className="flex items-center space-x-1.5 px-2.5 py-1.5 rounded-lg border border-slate-300 bg-slate-50 hover:bg-slate-100 text-gov-navy font-bold transition shadow-2xs focus:ring-2 focus:ring-gov-blue"
+            className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg border border-slate-300 bg-slate-50 hover:bg-slate-100 text-gov-navy font-bold text-sm transition shadow-2xs focus:ring-2 focus:ring-gov-blue"
             title={t('Accessibility Controls', 'अभिगम्यता नियंत्रण')}
             aria-label="Accessibility Settings"
           >
@@ -205,7 +205,7 @@ export const GovHeader: React.FC<GovHeaderProps> = ({ onSearch }) => {
           {/* Language Switcher (SEPARATE & PROMINENT ON ALL PAGES) */}
           <button
             onClick={toggleLanguage}
-            className="flex items-center space-x-1.5 px-2.5 py-1.5 rounded-lg border border-slate-300 bg-white hover:bg-slate-50 text-slate-800 font-bold transition shadow-2xs focus:ring-2 focus:ring-gov-blue"
+            className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg border border-slate-300 bg-white hover:bg-slate-50 text-slate-800 font-bold text-sm transition shadow-2xs focus:ring-2 focus:ring-gov-blue"
             title="Switch Language / भाषा बदलें"
             aria-label="Language Switcher"
           >
@@ -236,7 +236,7 @@ export const GovHeader: React.FC<GovHeaderProps> = ({ onSearch }) => {
                 >
                   <Bell className="w-5 h-5" />
                   {unreadCount > 0 && (
-                    <span className="absolute top-0.5 right-0.5 bg-gov-saffron text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
+                    <span className="absolute top-0.5 right-0.5 bg-gov-saffron text-white text-xs font-bold w-4 h-4 rounded-full flex items-center justify-center">
                       {unreadCount}
                     </span>
                   )}
@@ -259,11 +259,11 @@ export const GovHeader: React.FC<GovHeaderProps> = ({ onSearch }) => {
                   aria-label="User Account Menu"
                   className="flex items-center space-x-2 p-1.5 border border-gov-border rounded-lg hover:bg-slate-50 transition text-left focus:outline-none focus:ring-2 focus:ring-gov-blue cursor-pointer"
                 >
-                  <div className="w-8 h-8 rounded-full bg-gov-navy text-white flex items-center justify-center font-bold text-xs flex-shrink-0">
+                  <div className="w-8 h-8 rounded-full bg-gov-navy text-white flex items-center justify-center font-bold text-sm flex-shrink-0">
                     {currentUser.name ? currentUser.name.charAt(0).toUpperCase() : 'U'}
                   </div>
                   <div className="hidden md:block">
-                    <div className="text-xs font-bold text-gov-navy flex items-center space-x-1">
+                    <div className="text-sm font-bold text-gov-navy flex items-center space-x-1">
                       <span>{currentUser.name}</span>
                       {currentUser.verified && (
                         <span title="Verified Profile">
@@ -272,7 +272,7 @@ export const GovHeader: React.FC<GovHeaderProps> = ({ onSearch }) => {
                       )}
                     </div>
                     <div className="flex items-center space-x-1">
-                      <span className={`text-[10px] px-1.5 py-0.2 rounded border font-medium flex items-center space-x-1 ${getRoleBadgeColor(currentUser.role)}`}>
+                      <span className={`text-xs px-2 py-0.5 rounded border font-medium flex items-center space-x-1 ${getRoleBadgeColor(currentUser.role)}`}>
                         {getRoleIcon(currentUser.role)}
                         <span>{currentUser.subRole || currentUser.role}</span>
                       </span>
@@ -293,22 +293,22 @@ export const GovHeader: React.FC<GovHeaderProps> = ({ onSearch }) => {
                         {currentUser.role === 'citizen' ? 'Citizen Account' : `${currentUser.subRole || currentUser.role} Account`}
                       </div>
                       {currentUser.name && (
-                        <div className="text-xs font-bold text-slate-900 truncate">
+                        <div className="text-sm font-bold text-slate-900 truncate">
                           {currentUser.name}
                         </div>
                       )}
-                      <div className="text-[11px] text-slate-600 font-mono truncate">
+                      <div className="text-xs text-slate-600 font-mono truncate">
                         <span className="font-semibold text-slate-500">Identifier: </span>
                         {(currentUser as any).phone || currentUser.email || 'N/A'}
                       </div>
-                      <div className="text-[11px] text-slate-600">
+                      <div className="text-xs text-slate-600">
                         <span className="font-semibold text-slate-500">Account Type: </span>
                         <span className="font-bold text-gov-navy capitalize">{currentUser.subRole || currentUser.role}</span>
                       </div>
                     </div>
 
                     {/* Menu Actions */}
-                    <div className="space-y-1 font-medium text-xs">
+                    <div className="space-y-1 font-medium text-sm">
                       <button
                         type="button"
                         role="menuitem"
@@ -353,15 +353,15 @@ export const GovHeader: React.FC<GovHeaderProps> = ({ onSearch }) => {
       {isPublicAuthRoute && (
         <div className="bg-slate-100 border-t border-gov-border px-4 sm:px-8 py-2">
           {/* Desktop Nav */}
-          <div className="hidden md:flex items-center justify-between text-xs font-bold">
+          <div className="hidden md:flex items-center justify-between text-sm font-semibold">
             <nav className="flex items-center space-x-1" aria-label="Public Main Navigation">
               {publicNavLinks.map(link => {
-                const isActive = location.pathname === link.path || (link.path !== '/' && location.pathname.startsWith(link.path));
+                 const isActive = location.pathname === link.path || (link.path !== '/' && location.pathname.startsWith(link.path));
                 return (
                   <button
                     key={link.path}
                     onClick={() => navigate(link.path)}
-                    className={`px-3 py-1.5 rounded transition ${
+                    className={`px-3.5 py-1.5 rounded transition ${
                       isActive
                         ? 'bg-gov-navy text-white shadow-xs font-bold'
                         : 'text-slate-700 hover:bg-slate-200 hover:text-gov-navy'
@@ -375,9 +375,9 @@ export const GovHeader: React.FC<GovHeaderProps> = ({ onSearch }) => {
 
             <button
               onClick={() => navigate('/login')}
-              className="px-4 py-1.5 bg-gov-navy hover:bg-slate-800 text-white rounded font-bold flex items-center space-x-1.5 shadow-xs transition focus:ring-2 focus:ring-gov-blue"
+              className="px-4 py-2 bg-gov-navy hover:bg-slate-800 text-white rounded text-sm font-bold flex items-center space-x-2 shadow-xs transition focus:ring-2 focus:ring-gov-blue"
             >
-              <LogIn className="w-3.5 h-3.5 text-gov-saffron-amber" />
+              <LogIn className="w-4 h-4 text-gov-saffron-amber" />
               <span>{t('Login', 'लॉगिन')}</span>
             </button>
           </div>
@@ -385,7 +385,7 @@ export const GovHeader: React.FC<GovHeaderProps> = ({ onSearch }) => {
           {/* Mobile Collapsible Navigation Menu */}
           {isMobileMenuOpen && (
             <div className="md:hidden py-3 space-y-2 border-t border-slate-200">
-              <nav className="flex flex-col space-y-1 text-xs font-bold" aria-label="Mobile Navigation">
+              <nav className="flex flex-col space-y-1 text-sm font-semibold" aria-label="Mobile Navigation">
                 {publicNavLinks.map(link => {
                   const isActive = location.pathname === link.path || (link.path !== '/' && location.pathname.startsWith(link.path));
                   return (
@@ -395,7 +395,7 @@ export const GovHeader: React.FC<GovHeaderProps> = ({ onSearch }) => {
                         setIsMobileMenuOpen(false);
                         navigate(link.path);
                       }}
-                      className={`text-left px-3 py-2 rounded transition ${
+                      className={`text-left px-3.5 py-2.5 rounded transition ${
                         isActive
                           ? 'bg-gov-navy text-white font-bold'
                           : 'text-slate-700 hover:bg-slate-200'
@@ -412,9 +412,9 @@ export const GovHeader: React.FC<GovHeaderProps> = ({ onSearch }) => {
                     setIsMobileMenuOpen(false);
                     navigate('/login');
                   }}
-                  className="w-full text-center px-4 py-2 bg-gov-navy text-white text-xs font-bold rounded flex items-center justify-center space-x-2"
+                  className="w-full text-center px-4 py-2.5 bg-gov-navy text-white text-sm font-bold rounded flex items-center justify-center space-x-2"
                 >
-                  <LogIn className="w-3.5 h-3.5 text-gov-saffron-amber" />
+                  <LogIn className="w-4 h-4 text-gov-saffron-amber" />
                   <span>{t('Login to Portal', 'पोर्टल पर लॉगिन करें')}</span>
                 </button>
               </div>
@@ -425,10 +425,10 @@ export const GovHeader: React.FC<GovHeaderProps> = ({ onSearch }) => {
 
       {/* Primary Portal Navigation Bar (AUTHENTICATED ONLY) */}
       {!isPublicAuthRoute && (
-        <div className="bg-slate-100 border-t border-gov-border px-4 sm:px-8 py-2 flex items-center justify-between gap-2 text-xs">
+        <div className="bg-slate-100 border-t border-gov-border px-4 sm:px-8 py-2 flex items-center justify-between gap-2 text-sm">
           <div className="flex items-center space-x-2">
-            <span className="text-slate-600 font-bold uppercase tracking-wider text-[11px]">Active Portal:</span>
-            <div className="px-3 py-1.5 bg-gov-navy text-white rounded font-bold text-xs flex items-center space-x-2 shadow-xs">
+            <span className="text-slate-600 font-bold uppercase tracking-wider text-xs">Active Portal:</span>
+            <div className="px-3 py-1 bg-gov-navy text-white rounded font-bold text-xs sm:text-sm flex items-center space-x-2 shadow-xs">
               <span>
                 {location.pathname.startsWith('/citizen') ? 'Citizen Portal' :
                  location.pathname.startsWith('/university') ? 'University Portal' :

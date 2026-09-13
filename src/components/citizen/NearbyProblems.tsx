@@ -9,11 +9,9 @@ import {
   PlusCircle, 
   Eye, 
   CheckCircle2, 
-  AlertTriangle, 
   Search, 
   Check, 
-  Camera, 
-  X
+  Camera
 } from 'lucide-react';
 
 interface NearbyProblemsProps {
@@ -65,25 +63,25 @@ export const NearbyProblems: React.FC<NearbyProblemsProps> = ({ onViewDetails })
   return (
     <div className="space-y-4">
       {/* Header & Filter */}
-      <div className="bg-white p-4 rounded-lg border border-gov-border shadow-gov flex flex-wrap items-center justify-between gap-3">
+      <div className="bg-white p-5 rounded-lg border border-gov-border shadow-gov flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h2 className="text-lg font-bold text-gov-navy flex items-center space-x-2">
-            <MapPin className="w-5 h-5 text-gov-saffron" />
+          <h2 className="text-[23px] font-bold text-gov-navy flex items-center space-x-2 leading-tight">
+            <MapPin className="w-6 h-6 text-gov-saffron" />
             <span>{t('Problems Near Me (Ranchi District)', 'मेरे आस-पास की समस्याएं (राँची जिला)')}</span>
           </h2>
-          <p className="text-xs text-slate-500">
+          <p className="text-sm sm:text-base text-slate-600 mt-1">
             {t('Community endorsements increase verification priority for government inspection.', 'सामुदायिक पुष्टि से सत्यापन प्राथमिकता बढ़ती है।')}
           </p>
         </div>
 
-        <div className="relative w-full sm:w-64">
-          <Search className="w-4 h-4 absolute left-3 top-2.5 text-slate-400" />
+        <div className="relative w-full sm:w-72">
+          <Search className="w-4 h-4 absolute left-3.5 top-3 text-slate-400" />
           <input
             type="text"
             placeholder={t('Filter by ward or street...', 'वार्ड या स्थान खोजें...')}
             value={searchTerm}
             onChange={e => setSearchTerm(e.target.value)}
-            className="w-full pl-9 pr-3 py-1.5 text-xs border border-slate-300 rounded focus:border-gov-blue"
+            className="w-full pl-10 pr-3.5 py-2 text-sm sm:text-base border border-slate-300 rounded-md focus:border-gov-blue focus:ring-1 focus:ring-gov-blue text-slate-900 bg-white"
           />
         </div>
       </div>
@@ -97,17 +95,17 @@ export const NearbyProblems: React.FC<NearbyProblemsProps> = ({ onViewDetails })
           return (
             <div
               key={prob.id}
-              className="bg-white rounded-lg border border-gov-border hover:border-slate-400 shadow-gov p-4 flex flex-col justify-between space-y-3 transition"
+              className="bg-white rounded-lg border border-gov-border hover:border-slate-400 shadow-gov p-5 flex flex-col justify-between space-y-4 transition"
             >
-              <div className="space-y-2">
-                <div className="flex items-center justify-between text-xs">
-                  <span className="font-mono text-slate-500 bg-slate-100 px-2 py-0.5 rounded text-[11px]">
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="font-mono text-slate-700 bg-slate-100 px-2.5 py-1 rounded text-sm sm:text-[15px] font-bold border border-slate-200">
                     {prob.id}
                   </span>
                   <div className="flex items-center space-x-2">
-                    <span className="text-[11px] text-slate-500 font-medium">📍 {distanceKm} km away</span>
+                    <span className="text-xs sm:text-sm text-slate-500 font-medium">📍 {distanceKm} km away</span>
                     <span
-                      className={`text-[10px] px-2 py-0.5 rounded font-bold uppercase ${
+                      className={`text-xs sm:text-sm px-2.5 py-0.5 rounded font-bold uppercase ${
                         prob.aiAnalysis.priority === 'Critical'
                           ? 'bg-red-100 text-red-800'
                           : 'bg-amber-100 text-amber-800'
@@ -118,30 +116,30 @@ export const NearbyProblems: React.FC<NearbyProblemsProps> = ({ onViewDetails })
                   </div>
                 </div>
 
-                <h3 className="text-sm font-bold text-slate-900 line-clamp-2">{prob.title}</h3>
+                <h3 className="text-[19px] font-semibold text-slate-900 line-clamp-2 leading-snug">{prob.title}</h3>
 
-                <p className="text-xs text-slate-600 line-clamp-2 leading-relaxed">
+                <p className="text-base text-slate-600 line-clamp-2 leading-relaxed">
                   {prob.description}
                 </p>
 
-                <div className="flex flex-wrap items-center gap-3 text-xs text-slate-500 pt-1">
+                <div className="flex flex-wrap items-center gap-3 text-sm text-slate-600 pt-1">
                   <span className="flex items-center space-x-1">
-                    <MapPin className="w-3.5 h-3.5 text-slate-400" />
+                    <MapPin className="w-4 h-4 text-slate-400" />
                     <span>{prob.panchayatOrLocality}</span>
                   </span>
                   <span className="flex items-center space-x-1">
-                    <Users className="w-3.5 h-3.5 text-slate-400" />
+                    <Users className="w-4 h-4 text-slate-400" />
                     <span>~{prob.affectedPopulation.toLocaleString()} affected</span>
                   </span>
                 </div>
 
                 {/* Community Confirmation Bar */}
-                <div className="p-2 bg-slate-50 rounded border border-slate-200 flex items-center justify-between text-xs">
-                  <span className="text-slate-600">
+                <div className="p-3 bg-slate-50 rounded border border-slate-200 flex items-center justify-between text-sm">
+                  <span className="text-slate-700">
                     <span className="font-bold text-gov-navy">{prob.communityConfirmations}</span> residents confirmed this
                   </span>
-                  <span className="text-[10px] text-gov-green font-semibold flex items-center space-x-1">
-                    <CheckCircle2 className="w-3 h-3" />
+                  <span className="text-xs sm:text-sm text-gov-green font-semibold flex items-center space-x-1">
+                    <CheckCircle2 className="w-4 h-4" />
                     <span>Confidence High</span>
                   </span>
                 </div>
@@ -152,7 +150,7 @@ export const NearbyProblems: React.FC<NearbyProblemsProps> = ({ onViewDetails })
                 <button
                   onClick={() => handleFaceThisToo(prob.id)}
                   disabled={isConfirmed}
-                  className={`px-3 py-1.5 rounded text-xs font-semibold flex items-center space-x-1.5 transition ${
+                  className={`px-3.5 py-2 rounded text-sm font-semibold flex items-center space-x-1.5 transition ${
                     isConfirmed
                       ? 'bg-emerald-100 text-emerald-800 cursor-default'
                       : 'bg-slate-100 hover:bg-gov-saffron hover:text-white text-slate-700'
@@ -160,12 +158,12 @@ export const NearbyProblems: React.FC<NearbyProblemsProps> = ({ onViewDetails })
                 >
                   {isConfirmed ? (
                     <>
-                      <Check className="w-3.5 h-3.5 text-emerald-700" />
+                      <Check className="w-4 h-4 text-emerald-700" />
                       <span>{t('Confirmed by you', 'आपने पुष्टि की')}</span>
                     </>
                   ) : (
                     <>
-                      <ThumbsUp className="w-3.5 h-3.5" />
+                      <ThumbsUp className="w-4 h-4" />
                       <span>{t('I face this too', 'मुझे भी यह समस्या है')}</span>
                     </>
                   )}
@@ -174,18 +172,18 @@ export const NearbyProblems: React.FC<NearbyProblemsProps> = ({ onViewDetails })
                 <div className="flex items-center space-x-2">
                   <button
                     onClick={() => setEvidenceModalProblem(prob)}
-                    className="px-2.5 py-1.5 text-xs text-slate-700 hover:text-gov-navy border border-slate-300 rounded hover:bg-slate-50 flex items-center space-x-1"
+                    className="px-3 py-2 text-sm text-slate-700 hover:text-gov-navy border border-slate-300 rounded hover:bg-slate-50 flex items-center space-x-1.5 font-medium"
                   >
-                    <PlusCircle className="w-3.5 h-3.5" />
+                    <PlusCircle className="w-4 h-4" />
                     <span>{t('Add Evidence', 'साक्ष्य जोड़ें')}</span>
                   </button>
 
                   {onViewDetails && (
                     <button
                       onClick={() => onViewDetails(prob)}
-                      className="px-2.5 py-1.5 text-xs bg-gov-navy hover:bg-gov-navy-dark text-white rounded flex items-center space-x-1"
+                      className="px-3.5 py-2 text-sm bg-gov-navy hover:bg-gov-navy-dark text-white rounded flex items-center space-x-1.5 font-semibold"
                     >
-                      <Eye className="w-3.5 h-3.5" />
+                      <Eye className="w-4 h-4" />
                       <span>{t('View', 'देखें')}</span>
                     </button>
                   )}
@@ -202,12 +200,14 @@ export const NearbyProblems: React.FC<NearbyProblemsProps> = ({ onViewDetails })
           <div className="bg-white rounded-lg border border-gov-border shadow-gov-lg max-w-md w-full p-6 space-y-4">
             <div className="border-b border-gov-border pb-3 flex items-center justify-between">
               <div>
-                <h3 className="text-base font-bold text-gov-navy">Add Evidence to Grievance</h3>
-                <p className="text-xs text-slate-500">{evidenceModalProblem.id} • {evidenceModalProblem.panchayatOrLocality}</p>
+                <h3 className="text-[19px] font-semibold text-gov-navy">Add Evidence to Grievance</h3>
+                <p className="text-sm text-slate-600 mt-0.5">
+                  <span className="font-mono font-bold text-slate-700">{evidenceModalProblem.id}</span> • {evidenceModalProblem.panchayatOrLocality}
+                </p>
               </div>
               <button
                 onClick={() => setEvidenceModalProblem(null)}
-                className="text-slate-400 hover:text-slate-700 text-sm font-bold"
+                className="text-slate-400 hover:text-slate-700 text-lg font-bold p-1"
               >
                 ✕
               </button>
@@ -215,14 +215,14 @@ export const NearbyProblems: React.FC<NearbyProblemsProps> = ({ onViewDetails })
 
             {evidenceSubmitted ? (
               <div className="p-6 text-center space-y-2">
-                <CheckCircle2 className="w-10 h-10 text-gov-green mx-auto" />
-                <div className="text-sm font-bold text-slate-900">Evidence Uploaded Successfully!</div>
-                <div className="text-xs text-slate-500">Your supplementary proof has been appended to the official grievance dossier.</div>
+                <CheckCircle2 className="w-12 h-12 text-gov-green mx-auto" />
+                <div className="text-base font-bold text-slate-900">Evidence Uploaded Successfully!</div>
+                <div className="text-sm text-slate-600">Your supplementary proof has been appended to the official grievance dossier.</div>
               </div>
             ) : (
               <form onSubmit={handleAddEvidence} className="space-y-4">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">
+                  <label className="block text-[15px] sm:text-base font-semibold text-slate-800 mb-1.5">
                     Describe Additional Impact / Water Depth
                   </label>
                   <textarea
@@ -231,26 +231,26 @@ export const NearbyProblems: React.FC<NearbyProblemsProps> = ({ onViewDetails })
                     placeholder="e.g. Water reached 2 feet inside our driveway at 4 PM yesterday during rainfall..."
                     value={evidenceText}
                     onChange={e => setEvidenceText(e.target.value)}
-                    className="w-full p-2.5 text-xs border border-slate-300 rounded"
+                    className="w-full p-3 text-base text-slate-900 border border-slate-300 rounded-md focus:border-gov-blue focus:ring-1 focus:ring-gov-blue"
                   ></textarea>
                 </div>
 
-                <div className="p-3 bg-slate-50 border border-dashed border-slate-300 rounded flex items-center justify-center space-x-2 text-xs text-slate-600">
-                  <Camera className="w-4 h-4 text-gov-blue" />
+                <div className="p-3 bg-slate-50 border border-dashed border-slate-300 rounded-md flex items-center justify-center space-x-2 text-sm text-slate-700">
+                  <Camera className="w-5 h-5 text-gov-blue" />
                   <span>Photo simulation attached: "Harmu_depth_evidence_aug26.jpg"</span>
                 </div>
 
-                <div className="flex justify-end space-x-2 pt-2">
+                <div className="flex justify-end space-x-3 pt-2">
                   <button
                     type="button"
                     onClick={() => setEvidenceModalProblem(null)}
-                    className="px-3 py-1.5 text-xs text-slate-600 hover:bg-slate-100 rounded"
+                    className="px-4 py-2 text-sm sm:text-base text-slate-700 hover:bg-slate-100 rounded-md font-medium"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
-                    className="px-4 py-1.5 text-xs bg-gov-navy text-white font-semibold rounded hover:bg-gov-navy-dark"
+                    className="px-5 py-2 text-sm sm:text-base bg-gov-navy text-white font-semibold rounded-md hover:bg-gov-navy-dark shadow-sm"
                   >
                     Submit Proof
                   </button>

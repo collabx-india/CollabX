@@ -19,12 +19,9 @@ import {
   Award, 
   TrendingDown, 
   Users, 
-  CheckCircle2, 
   Star, 
   Droplets, 
   Clock, 
-  Building2,
-  ChevronRight,
   ShieldCheck
 } from 'lucide-react';
 
@@ -74,7 +71,6 @@ export const ImpactDashboard: React.FC = () => {
   ];
 
   // Citizen satisfaction breakdown data
-  const totalFb = feedback.length;
   const yesCount = feedback.filter(f => f.solvedStatus === 'YES').length;
   const partiallyCount = feedback.filter(f => f.solvedStatus === 'PARTIALLY').length;
   const noCount = feedback.filter(f => f.solvedStatus === 'NO').length;
@@ -112,7 +108,7 @@ export const ImpactDashboard: React.FC = () => {
         {/* 1. Waterlogging reduction */}
         <div className="bg-white p-5 rounded-lg border-2 border-emerald-300 shadow-gov space-y-1">
           <div className="flex items-center justify-between">
-            <span className="text-[10px] font-bold uppercase text-slate-500">Inundation Time</span>
+            <span className="text-xs font-semibold uppercase tracking-wider text-slate-600">Inundation Time</span>
             <TrendingDown className="w-4 h-4 text-gov-green" />
           </div>
           <div className="text-2xl font-black text-gov-navy">
@@ -127,7 +123,7 @@ export const ImpactDashboard: React.FC = () => {
         {/* 2. Water depth reduction */}
         <div className="bg-white p-5 rounded-lg border-2 border-blue-200 shadow-gov space-y-1">
           <div className="flex items-center justify-between">
-            <span className="text-[10px] font-bold uppercase text-slate-500">Peak Flood Depth</span>
+            <span className="text-xs font-semibold uppercase tracking-wider text-slate-600">Peak Flood Depth</span>
             <Droplets className="w-4 h-4 text-gov-blue" />
           </div>
           <div className="text-2xl font-black text-gov-navy">
@@ -142,7 +138,7 @@ export const ImpactDashboard: React.FC = () => {
         {/* 3. Beneficiaries */}
         <div className="bg-white p-5 rounded-lg border-2 border-purple-200 shadow-gov space-y-1">
           <div className="flex items-center justify-between">
-            <span className="text-[10px] font-bold uppercase text-slate-500">Citizens Impacted</span>
+            <span className="text-xs font-semibold uppercase tracking-wider text-slate-600">Citizens Impacted</span>
             <Users className="w-4 h-4 text-purple-700" />
           </div>
           <div className="text-2xl font-black text-gov-navy font-mono">
@@ -156,7 +152,7 @@ export const ImpactDashboard: React.FC = () => {
         {/* 4. Citizen Satisfaction */}
         <div className="bg-white p-5 rounded-lg border-2 border-amber-300 shadow-gov space-y-1">
           <div className="flex items-center justify-between">
-            <span className="text-[10px] font-bold uppercase text-slate-500">Citizen Satisfaction</span>
+            <span className="text-xs font-semibold uppercase tracking-wider text-slate-600">Citizen Satisfaction</span>
             <Star className="w-4 h-4 text-amber-500 fill-amber-500" />
           </div>
           <div className="text-2xl font-black text-slate-900 flex items-baseline space-x-1">
@@ -178,7 +174,7 @@ export const ImpactDashboard: React.FC = () => {
               <Clock className="w-4 h-4 text-gov-blue" />
               <span>Before vs. After Comparative Pilot Impact</span>
             </h3>
-            <p className="text-[11px] text-slate-500">
+            <p className="text-xs text-slate-500">
               Standing water duration (hours) and water depth (decimeters) before and after siphon bypass installation
             </p>
           </div>
@@ -186,10 +182,10 @@ export const ImpactDashboard: React.FC = () => {
           <div className="h-64 w-full pt-2">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={durationChartData} margin={{ top: 10, right: 30, left: 0, bottom: 10 }}>
-                <XAxis dataKey="metric" tick={{ fontSize: 11 }} />
-                <YAxis tick={{ fontSize: 11 }} />
+                <XAxis dataKey="metric" tick={{ fontSize: 12 }} />
+                <YAxis tick={{ fontSize: 12 }} />
                 <Tooltip />
-                <Legend wrapperStyle={{ fontSize: 11 }} />
+                <Legend wrapperStyle={{ fontSize: 12 }} />
                 <Bar dataKey="Before Intervention (Baseline)" fill="#DC2626" radius={[3, 3, 0, 0]} />
                 <Bar dataKey="After Siphon Pilot" fill="#138808" radius={[3, 3, 0, 0]} />
               </BarChart>
@@ -201,7 +197,7 @@ export const ImpactDashboard: React.FC = () => {
         <div className="bg-white rounded-lg border border-gov-border shadow-gov p-5 space-y-3 flex flex-col justify-between">
           <div className="border-b border-slate-100 pb-2">
             <h3 className="text-sm font-bold text-gov-navy">Citizen Verification Poll</h3>
-            <p className="text-[11px] text-slate-500">“Did this pilot solve the problem?”</p>
+            <p className="text-xs text-slate-500">“Did this pilot solve the problem?”</p>
           </div>
 
           <div className="h-44 w-full flex items-center justify-center">
@@ -263,13 +259,13 @@ export const ImpactDashboard: React.FC = () => {
                     ))}
                   </div>
                 </div>
-                <div className="text-[11px] text-slate-500">{fb.locality}</div>
+                <div className="text-xs text-slate-500">{fb.locality}</div>
                 <p className="text-slate-700 italic leading-relaxed pt-1">
                   "{fb.comment}"
                 </p>
               </div>
 
-              <div className="pt-2 border-t border-slate-200 flex items-center justify-between text-[11px]">
+              <div className="pt-2 border-t border-slate-200 flex items-center justify-between text-xs">
                 <span className="px-2 py-0.2 rounded bg-emerald-100 text-emerald-800 font-bold">
                   Status: {fb.solvedStatus}
                 </span>

@@ -67,72 +67,72 @@ export const RestrictedAccessPage: React.FC = () => {
   return (
     <div className="py-6 px-4 sm:px-6 lg:px-8 flex flex-col justify-center max-w-md mx-auto w-full">
       <div className="sm:mx-auto sm:w-full sm:max-w-md space-y-3 text-center">
-        <div className="w-14 h-14 mx-auto rounded-full bg-gov-navy flex items-center justify-center text-white border-2 border-amber-400 shadow-md">
-          <Shield className="w-8 h-8 text-amber-300" />
+        <div className="w-16 h-16 mx-auto rounded-full bg-gov-navy flex items-center justify-center text-white border-2 border-amber-400 shadow-md">
+          <Shield className="w-9 h-9 text-amber-300" />
         </div>
 
-        <span className="inline-block px-3 py-1 bg-amber-50 text-amber-900 border border-amber-300 rounded-full text-xs font-bold uppercase tracking-wider">
+        <span className="gov-badge inline-block px-3.5 py-1 bg-amber-50 text-amber-900 border border-amber-300 rounded-full uppercase tracking-wider">
           RESTRICTED ACCESS • VERIFICATION REQUIRED
         </span>
 
-        <h2 className="text-2xl font-black text-gov-navy tracking-tight">
+        <h1 className="gov-h1 text-gov-navy tracking-tight leading-tight">
           Government Official Login
-        </h2>
-        <p className="text-xs font-semibold text-amber-800 bg-amber-50 border border-amber-200 rounded p-2 max-w-xs mx-auto">
+        </h1>
+        <p className="gov-helper font-semibold text-amber-800 bg-amber-50 border border-amber-200 rounded-lg p-2.5 max-w-sm mx-auto">
           Access restricted to authorized government personnel.
         </p>
       </div>
 
       <div className="mt-6 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="bg-white py-8 px-6 shadow-gov rounded-lg border-2 border-slate-300 space-y-6">
+        <div className="bg-white py-8 px-6 sm:px-8 shadow-gov rounded-xl border border-slate-300 space-y-6">
           {/* Role Choice */}
-          <div className="space-y-1">
-            <label className="block text-xs font-bold text-slate-700">Select Statutory Role *</label>
-            <div className="grid grid-cols-2 gap-2 text-xs font-bold">
+          <div className="space-y-1.5">
+            <label className="gov-label text-slate-800 block mb-1">Select Statutory Role *</label>
+            <div className="grid grid-cols-2 gap-2.5 text-xs sm:text-sm font-semibold">
               <button
                 type="button"
                 onClick={() => setRestrictedRole('government')}
-                className={`p-3 rounded border flex flex-col items-center space-y-1 transition ${
+                className={`p-3.5 rounded-lg border flex flex-col items-center space-y-1.5 transition ${
                   restrictedRole === 'government'
                     ? 'bg-amber-50 border-amber-400 text-amber-900 shadow-xs'
                     : 'bg-slate-50 border-slate-200 text-slate-600 hover:bg-slate-100'
                 }`}
               >
-                <Building2 className="w-5 h-5 text-amber-700" />
-                <span>Government Officer</span>
-                <span className="text-[10px] font-normal text-slate-500">NOC & Challenge Desk</span>
+                <Building2 className="w-6 h-6 text-amber-700" />
+                <span className="text-sm font-bold">Government Officer</span>
+                <span className="text-xs font-normal text-slate-500">NOC & Challenge Desk</span>
               </button>
 
               <button
                 type="button"
                 onClick={() => setRestrictedRole('expert')}
-                className={`p-3 rounded border flex flex-col items-center space-y-1 transition ${
+                className={`p-3.5 rounded-lg border flex flex-col items-center space-y-1.5 transition ${
                   restrictedRole === 'expert'
                     ? 'bg-purple-50 border-purple-400 text-purple-900 shadow-xs'
                     : 'bg-slate-50 border-slate-200 text-slate-600 hover:bg-slate-100'
                 }`}
               >
-                <Award className="w-5 h-5 text-purple-700" />
-                <span>Domain Expert</span>
-                <span className="text-[10px] font-normal text-slate-500">Proposal Scoring & Decision</span>
+                <Award className="w-6 h-6 text-purple-700" />
+                <span className="text-sm font-bold">Domain Expert</span>
+                <span className="text-xs font-normal text-slate-500">Proposal Scoring & Decision</span>
               </button>
             </div>
           </div>
 
           {error && (
-            <div role="alert" className="p-3 bg-red-50 border border-red-200 rounded text-xs text-red-700 flex items-start space-x-2">
-              <AlertCircle className="w-4 h-4 text-red-600 flex-shrink-0 mt-0.5" />
+            <div role="alert" className="p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700 flex items-start space-x-2">
+              <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
               <span>{error}</span>
             </div>
           )}
 
           <form onSubmit={handleVerifyAndLogin} className="space-y-4">
             <div>
-              <label htmlFor="gov-service-id" className="block text-xs font-bold text-slate-700 mb-1">
+              <label htmlFor="gov-service-id" className="gov-label text-slate-800 block mb-1.5">
                 {restrictedRole === 'government' ? 'Government Service ID / Employee Code *' : 'Empanelled Expert ID / National PIN *'}
               </label>
               <div className="relative">
-                <Key className="w-4 h-4 absolute left-3 top-2.5 text-slate-400" />
+                <Key className="w-4 h-4 absolute left-3.5 top-3.5 text-slate-400" />
                 <input
                   id="gov-service-id"
                   type="text"
@@ -140,17 +140,17 @@ export const RestrictedAccessPage: React.FC = () => {
                   value={govId}
                   onChange={e => setGovId(e.target.value)}
                   disabled={otpSent}
-                  className="w-full pl-9 pr-3 py-2 text-xs border border-slate-300 rounded focus:ring-1 focus:ring-gov-blue focus:border-gov-blue font-mono"
+                  className="w-full pl-10 pr-3 py-3 text-base border border-slate-300 rounded-lg focus:ring-2 focus:ring-gov-blue focus:border-gov-blue font-mono transition"
                 />
               </div>
             </div>
 
             <div>
-              <label htmlFor="security-passcode" className="block text-xs font-bold text-slate-700 mb-1">
+              <label htmlFor="security-passcode" className="gov-label text-slate-800 block mb-1.5">
                 Security Token / Passcode *
               </label>
               <div className="relative">
-                <Lock className="w-4 h-4 absolute left-3 top-2.5 text-slate-400" />
+                <Lock className="w-4 h-4 absolute left-3.5 top-3.5 text-slate-400" />
                 <input
                   id="security-passcode"
                   type="password"
@@ -160,7 +160,7 @@ export const RestrictedAccessPage: React.FC = () => {
                   inputMode={otpSent ? 'numeric' : undefined}
                   maxLength={otpSent ? 6 : undefined}
                   disabled={!otpSent}
-                  className="w-full pl-9 pr-3 py-2 text-xs border border-slate-300 rounded focus:ring-1 focus:ring-gov-blue focus:border-gov-blue"
+                  className="w-full pl-10 pr-3 py-3 text-base border border-slate-300 rounded-lg focus:ring-2 focus:ring-gov-blue focus:border-gov-blue transition"
                 />
               </div>
             </div>
@@ -170,7 +170,7 @@ export const RestrictedAccessPage: React.FC = () => {
             <button
               type="submit"
               disabled={isVerifying}
-              className={`w-full py-2.5 px-4 border border-transparent rounded-md shadow-sm text-xs font-bold text-white transition flex items-center justify-center space-x-2 ${
+              className={`w-full py-3 px-4 border border-transparent rounded-lg shadow-sm gov-btn font-bold text-white transition flex items-center justify-center space-x-2 ${
                 restrictedRole === 'government' ? 'bg-amber-800 hover:bg-amber-900' : 'bg-purple-800 hover:bg-purple-900'
               }`}
             >
@@ -179,7 +179,7 @@ export const RestrictedAccessPage: React.FC = () => {
           </form>
 
           {/* Registration Prompt */}
-          <div className="pt-2 text-center text-xs text-slate-600">
+          <div className="pt-2 text-center text-sm sm:text-base text-slate-600">
             New to CollabX?{' '}
             <button
               type="button"
@@ -191,8 +191,8 @@ export const RestrictedAccessPage: React.FC = () => {
           </div>
 
           {/* Back link */}
-          <div className="pt-3 border-t border-slate-100 flex items-center justify-center text-xs">
-            <Link to="/login" className="text-slate-500 hover:text-slate-800 text-xs font-medium flex items-center">
+          <div className="pt-3 border-t border-slate-100 flex items-center justify-center">
+            <Link to="/login" className="text-slate-500 hover:text-slate-800 text-sm font-medium flex items-center">
               ← Back to account type
             </Link>
           </div>

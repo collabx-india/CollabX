@@ -50,7 +50,7 @@ export function normalizeInstitutionName(name: string | undefined | null): strin
   if (!name) return '';
   const cleaned = name
     .toLowerCase()
-    .replace(/[\(\)\,\.\-\_]/g, ' ')
+    .replace(/[(),.\-_]/g, ' ')
     .replace(/\s+/g, ' ')
     .trim();
 

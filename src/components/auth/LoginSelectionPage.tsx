@@ -48,10 +48,10 @@ export const LoginSelectionPage: React.FC = () => {
     <div className="py-8 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto w-full flex flex-col justify-center space-y-8">
       {/* Header Section */}
       <div className="text-center space-y-2 mb-2">
-        <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-gov-navy font-sans">
+        <h1 className="gov-h1 text-gov-navy font-sans leading-tight">
           {t('SIGN IN TO COLLABX', 'COLLABX में साइन इन करें')}
         </h1>
-        <p className="text-sm font-semibold text-slate-500 uppercase tracking-wider">
+        <p className="gov-group-heading text-slate-500 uppercase">
           {t('Choose your access', 'अपना एक्सेस चुनें')}
         </p>
       </div>
@@ -66,15 +66,15 @@ export const LoginSelectionPage: React.FC = () => {
               className="bg-white rounded-lg border border-slate-200 hover:border-gov-navy shadow-xs hover:shadow-md transition duration-200 p-6 flex flex-col justify-between group"
             >
               <div className="space-y-4">
-                <div className={`w-12 h-12 rounded-lg ${type.badgeColor} border flex items-center justify-center transition group-hover:bg-gov-navy group-hover:text-white group-hover:border-gov-navy`}>
-                  <IconComponent className="w-6 h-6" />
+                <div className={`w-14 h-14 rounded-lg ${type.badgeColor} border flex items-center justify-center transition group-hover:bg-gov-navy group-hover:text-white group-hover:border-gov-navy shrink-0`}>
+                  <IconComponent className="w-7 h-7" />
                 </div>
 
                 <div>
-                  <h2 className="text-base font-bold text-gov-navy font-sans">
+                  <h3 className="gov-h3 text-gov-navy leading-snug font-sans">
                     {type.title}
-                  </h2>
-                  <p className="text-xs text-slate-600 mt-1.5 leading-relaxed">
+                  </h3>
+                  <p className="gov-body text-slate-600 mt-2">
                     {type.description}
                   </p>
                 </div>
@@ -83,10 +83,10 @@ export const LoginSelectionPage: React.FC = () => {
               <div className="mt-6 pt-4 border-t border-slate-100">
                 <button
                   onClick={() => navigate(type.path)}
-                  className="w-full py-2.5 px-4 bg-gov-navy hover:bg-slate-800 text-white font-bold text-xs rounded-md flex items-center justify-center space-x-2 transition focus:ring-2 focus:ring-gov-blue shadow-xs"
+                  className="w-full py-3 px-4 bg-gov-navy hover:bg-slate-800 text-white font-bold gov-btn rounded-lg flex items-center justify-center space-x-2 transition focus:ring-2 focus:ring-gov-blue shadow-xs"
                 >
                   <span>{type.btnText}</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
+                  <ArrowRight className="w-4 h-4" />
                 </button>
               </div>
             </div>
@@ -96,18 +96,18 @@ export const LoginSelectionPage: React.FC = () => {
 
       {/* Separate Section: Government / Expert Access */}
       <div className="pt-4 border-t border-slate-200">
-        <div className="bg-slate-50 border border-slate-200 rounded-lg p-5 flex flex-col sm:flex-row items-center justify-between gap-4 max-w-2xl mx-auto">
-          <div className="flex items-center space-x-3 text-left">
-            <div className="w-10 h-10 rounded-md bg-gov-navy text-white flex items-center justify-center flex-shrink-0">
-              <Lock className="w-5 h-5 text-gov-saffron-amber" />
+        <div className="bg-slate-50 border border-slate-200 rounded-lg p-5 sm:p-6 flex flex-col sm:flex-row items-center justify-between gap-4 max-w-2xl mx-auto">
+          <div className="flex items-center space-x-3.5 text-left">
+            <div className="w-12 h-12 rounded-lg bg-gov-navy text-white flex items-center justify-center shrink-0">
+              <Lock className="w-6 h-6 text-gov-saffron-amber" />
             </div>
 
             <div>
-              <div className="text-sm font-bold text-gov-navy flex items-center space-x-1.5">
-                <ShieldCheck className="w-4 h-4 text-gov-navy" />
+              <div className="text-base sm:text-lg font-bold text-gov-navy flex items-center space-x-2">
+                <ShieldCheck className="w-5 h-5 text-gov-navy" />
                 <span>{t('Government / Expert Access', 'सरकारी अधिकारी / विशेषज्ञ प्रवेश')}</span>
               </div>
-              <div className="text-xs text-slate-500 font-medium mt-0.5">
+              <div className="text-xs sm:text-sm text-slate-500 font-medium mt-0.5">
                 Restricted to authorised personnel
               </div>
             </div>
@@ -115,7 +115,7 @@ export const LoginSelectionPage: React.FC = () => {
 
           <button
             onClick={() => navigate('/login/government')}
-            className="text-xs font-bold px-4 py-2.5 bg-gov-navy hover:bg-slate-800 text-white rounded-md flex items-center space-x-1.5 transition shadow-xs focus:ring-2 focus:ring-gov-blue"
+            className="gov-btn font-bold px-5 py-3 bg-gov-navy hover:bg-slate-800 text-white rounded-lg flex items-center space-x-2 transition shadow-xs focus:ring-2 focus:ring-gov-blue shrink-0"
           >
             <span>Verify to Login →</span>
           </button>
@@ -123,7 +123,7 @@ export const LoginSelectionPage: React.FC = () => {
       </div>
 
       {/* Global Registration Banner */}
-      <div className="text-center text-xs text-slate-600 font-medium pt-2">
+      <div className="text-center text-sm sm:text-base text-slate-600 font-medium pt-2">
         New to CollabX?{' '}
         <button
           onClick={() => navigate('/register')}

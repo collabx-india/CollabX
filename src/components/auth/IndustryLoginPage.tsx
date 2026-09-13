@@ -105,23 +105,26 @@ export const IndustryLoginPage: React.FC = () => {
   return (
     <div className="py-8 px-4 sm:px-6 lg:px-8 flex flex-col justify-center max-w-md mx-auto w-full">
       <div className="sm:mx-auto sm:w-full sm:max-w-md space-y-2 text-center mb-6">
-        <h1 className="text-2xl font-bold text-slate-900 tracking-tight flex items-center justify-center gap-2">
-          <Briefcase className="w-6 h-6 text-gov-navy" />
-          Industry / Organisation Login
+        <h1 className="gov-h1 text-slate-900 tracking-tight leading-tight flex items-center justify-center gap-2">
+          <Briefcase className="w-7 h-7 text-gov-navy shrink-0" />
+          <span>Industry Login</span>
         </h1>
+        <p className="gov-body text-slate-600">
+          Sign in to collaborate, mentor, and sponsor university civic innovations
+        </p>
       </div>
 
       <div className="bg-white p-6 sm:p-8 shadow-sm rounded-xl border border-slate-200 space-y-6">
         {error && (
-          <div role="alert" className="p-3 bg-red-50 border border-red-200 rounded-md text-xs text-red-700 flex items-center space-x-2">
-            <AlertCircle className="w-4 h-4 text-red-600 flex-shrink-0" />
+          <div role="alert" className="p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700 flex items-center space-x-2">
+            <AlertCircle className="w-5 h-5 text-red-600 shrink-0" />
             <span>{error}</span>
           </div>
         )}
 
         <form onSubmit={otpSent ? handleLogin : handleSendOtp} className="space-y-4">
           <div>
-            <label htmlFor="corporate-email" className="block text-xs font-semibold text-slate-700 mb-1">
+            <label htmlFor="corporate-email" className="gov-label text-slate-800 block mb-1.5">
               Corporate Work Email
             </label>
             <input
@@ -134,13 +137,13 @@ export const IndustryLoginPage: React.FC = () => {
                 if (error) setError('');
               }}
               disabled={otpSent}
-              className="w-full px-3 py-2 text-sm border border-slate-300 rounded-md focus:ring-2 focus:ring-gov-blue focus:border-gov-blue"
+              className="w-full p-3 text-base border border-slate-300 rounded-lg focus:ring-2 focus:ring-gov-blue focus:border-gov-blue transition"
             />
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
             <div>
-              <label htmlFor="company-name" className="block text-xs font-semibold text-slate-700 mb-1">
+              <label htmlFor="company-name" className="gov-label text-slate-800 block mb-1.5">
                 Company Name
               </label>
               <input
@@ -153,12 +156,12 @@ export const IndustryLoginPage: React.FC = () => {
                   if (error) setError('');
                 }}
                 disabled={otpSent}
-                className="w-full px-3 py-2 text-sm border border-slate-300 rounded-md focus:ring-2 focus:ring-gov-blue focus:border-gov-blue"
+                className="w-full p-3 text-base border border-slate-300 rounded-lg focus:ring-2 focus:ring-gov-blue focus:border-gov-blue transition"
               />
             </div>
 
             <div>
-              <label htmlFor="designation" className="block text-xs font-semibold text-slate-700 mb-1">
+              <label htmlFor="designation" className="gov-label text-slate-800 block mb-1.5">
                 Designation
               </label>
               <input
@@ -171,17 +174,17 @@ export const IndustryLoginPage: React.FC = () => {
                   if (error) setError('');
                 }}
                 disabled={otpSent}
-                className="w-full px-3 py-2 text-sm border border-slate-300 rounded-md focus:ring-2 focus:ring-gov-blue focus:border-gov-blue"
+                className="w-full p-3 text-base border border-slate-300 rounded-lg focus:ring-2 focus:ring-gov-blue focus:border-gov-blue transition"
               />
             </div>
           </div>
 
           <div>
-            <label htmlFor="industry-mobile" className="block text-xs font-semibold text-slate-700 mb-1">
+            <label htmlFor="industry-mobile" className="gov-label text-slate-800 block mb-1.5">
               Mobile Number
             </label>
-            <div className="relative flex rounded-md shadow-xs">
-              <span className="inline-flex items-center px-3 rounded-l-md border border-r-0 border-slate-300 bg-slate-50 text-slate-600 text-xs font-mono font-medium">
+            <div className="relative flex rounded-lg shadow-xs">
+              <span className="inline-flex items-center px-3.5 rounded-l-lg border border-r-0 border-slate-300 bg-slate-50 text-slate-700 text-sm font-mono font-bold">
                 +91
               </span>
               <input
@@ -194,14 +197,14 @@ export const IndustryLoginPage: React.FC = () => {
                 value={mobileNumber}
                 onChange={handleMobileChange}
                 disabled={otpSent}
-                className="flex-1 min-w-0 block w-full px-3 py-2 text-sm border border-slate-300 rounded-r-md focus:ring-2 focus:ring-gov-blue focus:border-gov-blue font-mono"
+                className="flex-1 min-w-0 block w-full p-3 text-base border border-slate-300 rounded-r-lg focus:ring-2 focus:ring-gov-blue focus:border-gov-blue font-mono transition"
               />
             </div>
           </div>
 
           {otpSent && (
-            <div className="space-y-2 pt-2">
-              <p className="text-xs text-center font-medium text-slate-700">
+            <div className="space-y-3 pt-3 border-t border-slate-200">
+              <p className="text-sm text-center font-medium text-slate-700">
                 OTP sent to your registered work email.
               </p>
               <OtpInput
@@ -220,13 +223,13 @@ export const IndustryLoginPage: React.FC = () => {
           <button
             type="submit"
             disabled={isSubmitting}
-            className="w-full py-2.5 px-4 rounded-md shadow-xs text-xs font-bold text-white bg-gov-navy hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gov-blue transition disabled:opacity-50"
+            className="w-full py-3 px-4 rounded-lg shadow-xs gov-btn font-bold text-white bg-gov-navy hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gov-blue transition disabled:opacity-50 mt-2"
           >
             {isSubmitting ? 'Processing...' : otpSent ? 'Verify OTP' : 'Send OTP'}
           </button>
         </form>
 
-        <div className="pt-2 text-center text-xs text-slate-600">
+        <div className="pt-2 text-center text-sm sm:text-base text-slate-600">
           New to CollabX?{' '}
           <button
             type="button"
@@ -238,8 +241,8 @@ export const IndustryLoginPage: React.FC = () => {
         </div>
 
         <div className="pt-4 border-t border-slate-100 text-center">
-          <Link to="/login" className="inline-flex items-center text-xs font-medium text-slate-500 hover:text-slate-800 transition">
-            <ArrowLeft className="w-3.5 h-3.5 mr-1" /> Back to account type
+          <Link to="/login" className="inline-flex items-center text-sm font-medium text-slate-500 hover:text-slate-800 transition">
+            <ArrowLeft className="w-4 h-4 mr-1.5" /> Back to account type
           </Link>
         </div>
       </div>

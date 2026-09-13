@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useAccessibility } from '../../context/AccessibilityContext';
 import { storageService } from '../../services/storageService';
@@ -10,24 +10,17 @@ import { CitizenFeedbackModal } from './CitizenFeedbackModal';
 import { CitizenPortalLayout } from './CitizenPortalLayout';
 import { OfflineReportsStatus } from './OfflineReportsStatus';
 import { 
-  PlusCircle, 
-  Search, 
-  AlertCircle
+  PlusCircle
 } from 'lucide-react';
 
 export const CitizenDashboard: React.FC = () => {
   const { currentUser } = useAuth();
   const { t } = useAccessibility();
   const navigate = useNavigate();
-  const location = useLocation();
 
   const [problems, setProblems] = useState<ProblemReport[]>(() => storageService.getProblems());
   const [isFeedbackOpen, setIsFeedbackOpen] = useState<boolean>(false);
   const [feedbackProjectId, setFeedbackProjectId] = useState<string>('PROJ-JH-2024-001');
-
-  // Track Report State
-  const [trackSearchId, setTrackSearchId] = useState<string>('');
-  const [searchedReport, setSearchedReport] = useState<ProblemReport | null | undefined>(undefined);
 
   const myReports = problems.filter(p => 
     p.citizenName?.toLowerCase().includes((currentUser?.name || '').toLowerCase()) || 
@@ -57,15 +50,6 @@ export const CitizenDashboard: React.FC = () => {
     setIsFeedbackOpen(true);
   };
 
-  const handleTrackSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!trackSearchId.trim()) return;
-    const found = problems.find(p => p.id.toLowerCase() === trackSearchId.trim().toLowerCase());
-    setSearchedReport(found || null);
-  };
-
-  const notifications = storageService.getNotifications();
-
   return (
     <CitizenPortalLayout>
       <Routes>
@@ -75,55 +59,55 @@ export const CitizenDashboard: React.FC = () => {
           element={
             <div className="space-y-6">
               <OfflineReportsStatus />
-              <div className="bg-white p-4 rounded-md border border-slate-200 space-y-1">
-                <h2 className="text-base font-bold text-gov-navy">Citizen Dashboard</h2>
-                <p className="text-xs text-slate-600">
+              <div className="bg-white p-4 sm:p-5 rounded-md border border-slate-200 space-y-1">
+                <h2 className="gov-h2">Citizen Dashboard</h2>
+                <p className="gov-body text-slate-600">
                   {t('View your submitted reports and their current status.', 'अपनी दर्ज शिकायतों और उनकी स्थिति देखें।')}
                 </p>
               </div>
 
               {/* Summary KPI Cards */}
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                <div className="bg-white p-4 rounded-md border border-slate-200">
-                  <div className="text-xs font-bold text-slate-500 uppercase tracking-wider">{t('Reports Submitted', 'दर्ज कुल समस्याएं')}</div>
-                  <div className="text-2xl font-bold text-gov-navy mt-1">{totalSubmitted}</div>
-                  <div className="text-[11px] text-slate-500 mt-1">Recorded in portal</div>
+                <div className="bg-white p-4 sm:p-5 rounded-md border border-slate-200">
+                  <div className="gov-label text-slate-600 uppercase tracking-wider">{t('Reports Submitted', 'दर्ज कुल समस्याएं')}</div>
+                  <div className="text-3xl font-bold text-gov-navy mt-1">{totalSubmitted}</div>
+                  <div className="gov-helper mt-1">Recorded in portal</div>
                 </div>
 
-                <div className="bg-white p-4 rounded-md border border-slate-200">
-                  <div className="text-xs font-bold text-amber-700 uppercase tracking-wider">{t('Under Review', 'समीक्षा के अधीन')}</div>
-                  <div className="text-2xl font-bold text-amber-800 mt-1">{underReviewCount}</div>
-                  <div className="text-[11px] text-slate-500 mt-1">Initial assessment</div>
+                <div className="bg-white p-4 sm:p-5 rounded-md border border-slate-200">
+                  <div className="gov-label text-amber-800 uppercase tracking-wider">{t('Under Review', 'समीक्षा के अधीन')}</div>
+                  <div className="text-3xl font-bold text-amber-800 mt-1">{underReviewCount}</div>
+                  <div className="gov-helper mt-1">Initial assessment</div>
                 </div>
 
-                <div className="bg-white p-4 rounded-md border border-slate-200">
-                  <div className="text-xs font-bold text-blue-700 uppercase tracking-wider">{t('Action Initiated', 'कार्रवाई शुरू')}</div>
-                  <div className="text-2xl font-bold text-blue-900 mt-1">{actionInitiatedCount}</div>
-                  <div className="text-[11px] text-slate-500 mt-1">Department assigned</div>
+                <div className="bg-white p-4 sm:p-5 rounded-md border border-slate-200">
+                  <div className="gov-label text-blue-800 uppercase tracking-wider">{t('Action Initiated', 'कार्रवाई शुरू')}</div>
+                  <div className="text-3xl font-bold text-blue-900 mt-1">{actionInitiatedCount}</div>
+                  <div className="gov-helper mt-1">Department assigned</div>
                 </div>
 
-                <div className="bg-white p-4 rounded-md border border-slate-200">
-                  <div className="text-xs font-bold text-emerald-700 uppercase tracking-wider">{t('Resolved', 'समाधान हुआ')}</div>
-                  <div className="text-2xl font-bold text-emerald-800 mt-1">{resolvedCount}</div>
-                  <div className="text-[11px] text-slate-500 mt-1">Verified on ground</div>
+                <div className="bg-white p-4 sm:p-5 rounded-md border border-slate-200">
+                  <div className="gov-label text-emerald-800 uppercase tracking-wider">{t('Resolved', 'समाधान हुआ')}</div>
+                  <div className="text-3xl font-bold text-emerald-800 mt-1">{resolvedCount}</div>
+                  <div className="gov-helper mt-1">Verified on ground</div>
                 </div>
               </div>
 
               {/* Action Callout */}
-              <div className="bg-white p-4 sm:p-5 rounded-md border border-slate-200 flex flex-wrap items-center justify-between gap-4">
+              <div className="bg-white p-5 sm:p-6 rounded-md border border-slate-200 flex flex-wrap items-center justify-between gap-4">
                 <div className="space-y-1">
-                  <h3 className="text-sm font-bold text-gov-navy">
+                  <h3 className="gov-h3">
                     {t('Need to report a new civic issue?', 'क्या नई नागरिक समस्या दर्ज करनी है?')}
                   </h3>
-                  <p className="text-xs text-slate-600">
+                  <p className="gov-body text-slate-600">
                     {t('Submit location, photos, or details for official departmental evaluation.', 'विभाग द्वारा मूल्यांकन हेतु स्थान व विवरण दर्ज करें।')}
                   </p>
                 </div>
                 <button
                   onClick={() => navigate('/citizen/report')}
-                  className="px-4 py-2 bg-gov-navy hover:bg-slate-800 text-white rounded text-xs font-bold flex items-center space-x-1.5 shadow-sm transition"
+                  className="px-5 py-2.5 bg-gov-navy hover:bg-slate-800 text-white rounded-md gov-button flex items-center space-x-2 shadow-sm transition"
                 >
-                  <PlusCircle className="w-4 h-4" />
+                  <PlusCircle className="w-5 h-5" />
                   <span>{t('Report a Problem', 'समस्या दर्ज करें')}</span>
                 </button>
               </div>
@@ -131,31 +115,31 @@ export const CitizenDashboard: React.FC = () => {
               {/* Recent Reports Table */}
               <div className="bg-white rounded-md border border-slate-200 p-5 space-y-4">
                 <div className="flex items-center justify-between border-b border-slate-200 pb-3">
-                  <h3 className="text-xs font-bold text-gov-navy uppercase tracking-wider">
+                  <h2 className="gov-h2">
                     {t('Recent Grievance Submissions', 'हालिया दर्ज शिकायतें')}
-                  </h3>
+                  </h2>
                   <button
                     onClick={() => navigate('/citizen/reports')}
-                    className="text-xs font-semibold text-gov-navy hover:underline"
+                    className="gov-button text-gov-navy hover:underline"
                   >
                     {t('View All Submissions →', 'सभी देखें →')}
                   </button>
                 </div>
 
                 {displayReports.length === 0 ? (
-                  <div className="py-8 text-center text-xs text-slate-500">
+                  <div className="py-8 text-center gov-helper">
                     {t('No reports submitted yet.', 'अभी तक कोई समस्या दर्ज नहीं की गई है।')}
                   </div>
                 ) : (
                   <div className="overflow-x-auto">
-                    <table className="w-full text-left text-xs border-collapse">
+                    <table className="w-full text-left border-collapse">
                       <thead>
-                        <tr className="bg-slate-100 border-b border-slate-200 text-slate-700 font-bold">
-                          <th className="p-2.5">Registration ID</th>
-                          <th className="p-2.5">Category</th>
-                          <th className="p-2.5">Date</th>
-                          <th className="p-2.5">Status</th>
-                          <th className="p-2.5 text-right">Action</th>
+                        <tr className="bg-slate-100 border-b border-slate-200 text-slate-800">
+                          <th className="p-3.5 gov-table-th">Registration ID</th>
+                          <th className="p-3.5 gov-table-th">Category</th>
+                          <th className="p-3.5 gov-table-th">Date</th>
+                          <th className="p-3.5 gov-table-th">Status</th>
+                          <th className="p-3.5 gov-table-th text-right">Action</th>
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-slate-200">
@@ -178,19 +162,19 @@ export const CitizenDashboard: React.FC = () => {
                           }
 
                           return (
-                            <tr key={report.id} className="hover:bg-slate-50">
-                              <td className="p-2.5 font-mono font-bold text-gov-navy">{report.id}</td>
-                              <td className="p-2.5">{report.aiAnalysis?.category || 'Civic Infrastructure'}</td>
-                              <td className="p-2.5 text-slate-600">{new Date(report.createdAt).toLocaleDateString()}</td>
-                              <td className="p-2.5">
-                                <span className={`px-2 py-0.5 rounded text-[11px] font-semibold border ${statusBadgeClass}`}>
+                            <tr key={report.id} className="hover:bg-slate-50 transition">
+                              <td className="p-3.5 gov-id text-gov-navy font-bold">{report.id}</td>
+                              <td className="p-3.5 gov-table-td font-medium text-slate-800">{report.aiAnalysis?.category || 'Civic Infrastructure'}</td>
+                              <td className="p-3.5 gov-table-td text-slate-600">{new Date(report.createdAt).toLocaleDateString()}</td>
+                              <td className="p-3.5">
+                                <span className={`inline-block gov-badge border ${statusBadgeClass}`}>
                                   {statusLabel}
                                 </span>
                               </td>
-                              <td className="p-2.5 text-right">
+                              <td className="p-3.5 text-right">
                                 <button
-                                  onClick={() => navigate('/citizen/reports')}
-                                  className="text-gov-navy font-semibold hover:underline"
+                                  onClick={() => navigate(`/citizen/reports/${report.id}`)}
+                                  className="gov-button text-gov-navy hover:underline"
                                 >
                                   View Details
                                 </button>
@@ -213,21 +197,30 @@ export const CitizenDashboard: React.FC = () => {
           element={
             <div className="space-y-4">
               <OfflineReportsStatus />
-              <div className="bg-white p-4 rounded-md border border-slate-200 text-xs text-slate-600">
-                <h2 className="text-sm font-bold text-gov-navy mb-1">Report a Problem</h2>
-                <p>Fill out the required details below to submit a formal report to municipal authorities.</p>
+              <div className="bg-white p-5 rounded-md border border-slate-200">
+                <h2 className="text-[22px] sm:text-[23px] font-bold text-gov-navy mb-1 leading-tight">Report a Problem</h2>
+                <p className="text-base text-slate-600">Fill out the required details below to submit a formal report to municipal authorities.</p>
               </div>
               <ProblemReportForm onSuccess={handleProblemSubmitted} />
             </div>
           }
         />
 
-        {/* 3. My Problems */}
+        {/* 3. My Problems & Single Report Details */}
         <Route
           path="reports"
           element={
             <MyReportsTimeline
               problems={displayReports}
+              onOpenFeedbackModal={handleOpenFeedback}
+            />
+          }
+        />
+        <Route
+          path="reports/:reportId"
+          element={
+            <MyReportsTimeline
+              problems={problems}
               onOpenFeedbackModal={handleOpenFeedback}
             />
           }

@@ -48,7 +48,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   useEffect(() => {
     if (!storageService.getAuthToken()) {
-      setIsLoading(false);
       return;
     }
     void collabxApi.getCurrentUser()

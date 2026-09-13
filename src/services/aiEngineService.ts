@@ -14,7 +14,6 @@ export class AIEngineService {
     existingProblems: ProblemReport[] = []
   ): AIProblemAnalysis {
     const text = `${title} ${description} ${locality}`.toLowerCase();
-    const cleanTokens = text.replace(/[^a-z0-9\s]/g, ' ').split(/\s+/).filter(w => w.length > 2);
 
     let category = 'Urban Infrastructure & Public Works';
     let severity = 65;

@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { Challenge, SupportType, SupportStatus, CollaborationOffer } from '../../types';
 import { storageService } from '../../services/storageService';
 import { useAuth } from '../../context/AuthContext';
-import { useAccessibility } from '../../context/AccessibilityContext';
 import { 
   X, 
   CheckCircle2, 
@@ -34,7 +33,6 @@ export const OfferSupportModal: React.FC<OfferSupportModalProps> = ({
   onSubmitted,
 }) => {
   const { currentUser } = useAuth();
-  const { t } = useAccessibility();
 
   const [selectedTypes, setSelectedTypes] = useState<SupportType[]>(['Hardware', 'Mentorship', 'Testing Facility']);
   const [supportStatus, setSupportStatus] = useState<SupportStatus>('Confirmed Funding');
@@ -76,9 +74,12 @@ export const OfferSupportModal: React.FC<OfferSupportModalProps> = ({
 
     const projects = storageService.getProjects();
     if (projects[0]) {
-      projects[0].industryPartnerName = newOffer.industryName;
-      projects[0].industrySupportStatus = supportStatus;
-      storageService.saveProject(projects[0]);
+      const updatedProject = {
+        ...projects[0],
+        industryPartnerName: newOffer.industryName,
+        industrySupportStatus: supportStatus,
+      };
+      storageService.saveProject(updatedProject);
     }
 
     storageService.addAuditLog({
@@ -113,13 +114,13 @@ export const OfferSupportModal: React.FC<OfferSupportModalProps> = ({
       <div className="bg-white rounded-md border border-slate-300 max-w-xl w-full p-5 sm:p-6 space-y-4 shadow-md">
         <div className="border-b border-slate-200 pb-3 flex items-center justify-between">
           <div>
-            <span className="text-[10px] font-bold text-gov-navy uppercase tracking-wider block">
+            <span className="text-xs sm:text-sm font-bold text-gov-navy uppercase tracking-wider block">
               Corporate / Organisation Support Form
             </span>
-            <h3 id="modal-title" className="text-base font-bold text-gov-navy mt-0.5">
+            <h3 id="modal-title" className="text-[19px] font-semibold text-gov-navy mt-1">
               Offer Support
             </h3>
-            <p className="text-xs text-slate-600">Challenge: {challenge.title}</p>
+            <p className="text-sm sm:text-base text-slate-600 mt-0.5">Challenge: <span className="font-semibold text-slate-800">{challenge.title}</span></p>
           </div>
           <button onClick={onClose} className="text-slate-400 hover:text-slate-700 p-1">
             <X className="w-5 h-5" />
@@ -132,18 +133,18 @@ export const OfferSupportModal: React.FC<OfferSupportModalProps> = ({
             <div className="text-base font-bold text-slate-900">
               Support Package Committed Successfully
             </div>
-            <div className="text-xs text-slate-600">
+            <div className="text-sm text-slate-600">
               The research team and nodal officer have been notified of your allocated support.
             </div>
           </div>
         ) : (
-          <form onSubmit={handleSubmit} className="space-y-4 text-xs">
+          <form onSubmit={handleSubmit} className="space-y-4">
             {/* Support Type Selection */}
             <div>
-              <label className="block font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+              <label className="block text-[15px] sm:text-base font-semibold text-slate-800 mb-2">
                 1. Support Type *
               </label>
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
                 {SUPPORT_TYPES.map(type => {
                   const isSelected = selectedTypes.includes(type);
                   return (
@@ -151,9 +152,9 @@ export const OfferSupportModal: React.FC<OfferSupportModalProps> = ({
                       type="button"
                       key={type}
                       onClick={() => toggleType(type)}
-                      className={`p-2 rounded border text-center font-semibold transition ${
+                      className={`p-2.5 rounded-md border text-center text-sm font-semibold transition ${
                         isSelected
-                          ? 'bg-gov-navy text-white border-gov-navy'
+                          ? 'bg-gov-navy text-white border-gov-navy shadow-xs'
                           : 'bg-slate-50 text-slate-700 border-slate-300 hover:bg-slate-100'
                       }`}
                     >
@@ -166,18 +167,18 @@ export const OfferSupportModal: React.FC<OfferSupportModalProps> = ({
 
             {/* Support Status Allocation */}
             <div>
-              <label className="block font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+              <label className="block text-[15px] sm:text-base font-semibold text-slate-800 mb-2">
                 2. Allocation Commitment Status *
               </label>
-              <div className="grid grid-cols-3 gap-2">
+              <div className="grid grid-cols-3 gap-2.5">
                 {(['Confirmed Funding', 'Support Available', 'Not Allocated'] as SupportStatus[]).map(status => (
                   <button
                     type="button"
                     key={status}
                     onClick={() => setSupportStatus(status)}
-                    className={`py-2 px-2 rounded border text-center font-bold text-xs transition ${
+                    className={`py-2.5 px-2 rounded-md border text-center font-bold text-sm transition ${
                       supportStatus === status
-                        ? 'bg-emerald-800 text-white border-emerald-800'
+                        ? 'bg-emerald-800 text-white border-emerald-800 shadow-xs'
                         : 'bg-slate-50 text-slate-700 border-slate-300 hover:bg-slate-100'
                     }`}
                   >
@@ -189,7 +190,7 @@ export const OfferSupportModal: React.FC<OfferSupportModalProps> = ({
 
             {/* Description / Resources specification */}
             <div>
-              <label className="block font-bold text-slate-700 uppercase tracking-wider mb-1">
+              <label className="block text-[15px] sm:text-base font-semibold text-slate-800 mb-1.5">
                 3. Proposed Contribution & Resource Specifications *
               </label>
               <textarea
@@ -197,24 +198,24 @@ export const OfferSupportModal: React.FC<OfferSupportModalProps> = ({
                 rows={3}
                 value={description}
                 onChange={e => setDescription(e.target.value)}
-                className="w-full p-2.5 text-xs border border-slate-300 rounded leading-relaxed focus:outline-none focus:ring-1 focus:ring-gov-navy"
+                className="w-full p-3 text-base border border-slate-300 rounded-md leading-relaxed text-slate-900 bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy"
               ></textarea>
             </div>
 
             {/* Form Actions */}
-            <div className="flex justify-end space-x-2 pt-2 border-t border-slate-200">
+            <div className="flex justify-end space-x-3 pt-3 border-t border-slate-200">
               <button
                 type="button"
                 onClick={onClose}
-                className="px-3 py-1.5 border border-slate-300 rounded text-slate-700 hover:bg-slate-50"
+                className="px-4 py-2 border border-slate-300 rounded-md text-slate-700 hover:bg-slate-50 font-semibold text-sm sm:text-base"
               >
                 Cancel
               </button>
               <button
                 type="submit"
-                className="px-5 py-1.5 bg-gov-navy hover:bg-slate-800 text-white font-semibold rounded flex items-center space-x-1.5 transition"
+                className="px-6 py-2.5 bg-gov-navy hover:bg-slate-800 text-white font-bold rounded-md flex items-center space-x-2 text-sm sm:text-base shadow-sm transition"
               >
-                <Send className="w-3.5 h-3.5" />
+                <Send className="w-4 h-4" />
                 <span>Confirm Support Contribution</span>
               </button>
             </div>

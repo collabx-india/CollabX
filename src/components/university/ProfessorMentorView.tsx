@@ -2,24 +2,19 @@ import React, { useState } from 'react';
 import { IdeaProposal, Project } from '../../types';
 import { storageService } from '../../services/storageService';
 import { useAuth } from '../../context/AuthContext';
-import { useAccessibility } from '../../context/AccessibilityContext';
 import { 
   GraduationCap, 
-  CheckCircle2, 
-  Sparkles, 
   Building, 
-  FileText, 
-  Send, 
-  MessageSquare,
-  ShieldCheck,
+  ShieldCheck, 
   Award
 } from 'lucide-react';
 
+const createNotificationId = () => `notif-${Date.now()}`;
+
 export const ProfessorMentorView: React.FC = () => {
   const { currentUser } = useAuth();
-  const { t } = useAccessibility();
 
-  const [ideas, setIdeas] = useState<IdeaProposal[]>(() => storageService.getIdeas());
+  const [ideas] = useState<IdeaProposal[]>(() => storageService.getIdeas());
   const [activeProject] = useState<Project>(() => storageService.getProjects()[0]);
   const [adviceText, setAdviceText] = useState('');
   const [endorsedIdeaId, setEndorsedIdeaId] = useState<string | null>('IDEA-BIT-001');
@@ -27,7 +22,7 @@ export const ProfessorMentorView: React.FC = () => {
   const handleEndorse = (ideaId: string) => {
     setEndorsedIdeaId(ideaId);
     storageService.addNotification({
-      id: `notif-${Date.now()}`,
+      id: createNotificationId(),
       title: 'Professor Endorsement Added',
       message: `${currentUser.name} has endorsed your proposal for state expert review.`,
       type: 'success',
@@ -40,7 +35,7 @@ export const ProfessorMentorView: React.FC = () => {
 
   const handleRequestIndustryLabAccess = () => {
     storageService.addNotification({
-      id: `notif-${Date.now()}`,
+      id: createNotificationId(),
       title: 'Industry Lab Access Requested by Faculty',
       message: `${currentUser.name} (BIT Mesra) requested testing flume access from Tata Steel GovTech Division.`,
       type: 'info',
@@ -54,37 +49,37 @@ export const ProfessorMentorView: React.FC = () => {
   return (
     <div className="space-y-6">
       {/* Mentor Header */}
-      <div className="bg-white p-5 rounded-lg border border-gov-border shadow-gov flex flex-wrap items-center justify-between gap-3">
+      <div className="bg-white p-5 rounded-lg border border-gov-border shadow-gov flex flex-wrap items-center justify-between gap-4">
         <div>
-          <div className="flex items-center space-x-2">
-            <GraduationCap className="w-5 h-5 text-gov-blue" />
-            <h2 className="text-lg font-bold text-gov-navy">
+          <div className="flex items-center space-x-2.5">
+            <GraduationCap className="w-6 h-6 text-gov-blue" />
+            <h2 className="gov-h2">
               Faculty Mentorship & Academic Supervision Portal
             </h2>
           </div>
-          <p className="text-xs text-slate-500 mt-0.5">
-            Supervising: <span className="font-semibold text-slate-700">{currentUser.name}</span> • {currentUser.department}, {currentUser.organization}
+          <p className="gov-body text-slate-600 mt-1">
+            Supervising: <span className="font-semibold text-slate-800">{currentUser.name}</span> • {currentUser.department}, {currentUser.organization}
           </p>
         </div>
 
         <div className="flex items-center space-x-2">
           <button
             onClick={handleRequestIndustryLabAccess}
-            className="px-3 py-1.5 bg-gov-blue hover:bg-gov-blue-light text-white rounded text-xs font-bold flex items-center space-x-1.5 shadow-sm transition"
+            className="px-4 py-2.5 bg-gov-blue hover:bg-gov-blue-light text-white rounded-md gov-button flex items-center space-x-2 shadow-sm transition"
           >
-            <Building className="w-3.5 h-3.5" />
+            <Building className="w-4 h-4" />
             <span>Request Industry Facility Access</span>
           </button>
         </div>
       </div>
 
       {/* Student Proposals Pending Faculty Review */}
-      <div className="bg-white rounded-lg border border-gov-border shadow-gov p-5 space-y-4">
-        <div className="border-b border-slate-100 pb-2 flex items-center justify-between">
-          <h3 className="text-sm font-bold text-gov-navy">
+      <div className="bg-white rounded-lg border border-gov-border shadow-gov p-5 sm:p-6 space-y-4">
+        <div className="border-b border-slate-100 pb-3 flex flex-wrap items-center justify-between gap-2">
+          <h3 className="gov-h3">
             Student Departmental Proposals Under Review ({ideas.length})
           </h3>
-          <span className="text-[11px] text-slate-500 italic">
+          <span className="text-xs sm:text-sm text-slate-500 italic">
             * Note: Faculty mentors provide academic guidance. Final selection is made by the State Domain Expert.
           </span>
         </div>
@@ -96,41 +91,41 @@ export const ProfessorMentorView: React.FC = () => {
             return (
               <div
                 key={idea.id}
-                className="p-4 rounded-lg border border-slate-200 hover:border-slate-300 bg-slate-50 space-y-3"
+                className="p-5 rounded-lg border border-slate-200 hover:border-slate-300 bg-slate-50 space-y-3.5"
               >
-                <div className="flex flex-wrap items-center justify-between gap-2">
+                <div className="flex flex-wrap items-center justify-between gap-3">
                   <div>
-                    <div className="flex items-center space-x-2">
-                      <span className="font-mono text-xs font-bold text-slate-600 bg-white px-2 py-0.5 rounded border border-slate-200">
+                    <div className="flex items-center space-x-2.5">
+                      <span className="gov-id font-bold text-slate-700 bg-white px-2.5 py-1 rounded border border-slate-200">
                         {idea.id}
                       </span>
-                      <span className="text-xs font-bold text-gov-navy">{idea.teamName}</span>
-                      <span className="text-[11px] text-slate-500">({idea.leadStudentName}, Lead)</span>
+                      <span className="text-sm sm:text-base font-bold text-gov-navy">{idea.teamName}</span>
+                      <span className="text-xs sm:text-sm text-slate-500">({idea.leadStudentName}, Lead)</span>
                     </div>
-                    <h4 className="text-sm font-bold text-slate-900 mt-1">{idea.title}</h4>
+                    <h4 className="text-base sm:text-lg font-bold text-slate-900 mt-1">{idea.title}</h4>
                   </div>
 
-                  <div className="flex items-center space-x-2">
-                    <span className="text-xs font-bold px-2 py-0.5 rounded bg-blue-100 text-gov-blue">
+                  <div className="flex items-center space-x-2.5">
+                    <span className="gov-badge bg-blue-100 text-gov-blue">
                       Technical Feasibility Evaluation: {idea.aiScores.compositeScore}/100
                     </span>
 
                     <button
                       onClick={() => handleEndorse(idea.id)}
                       disabled={isEndorsed}
-                      className={`px-3 py-1 text-xs font-bold rounded flex items-center space-x-1 transition ${
+                      className={`px-4 py-2 gov-button rounded-md flex items-center space-x-1.5 transition ${
                         isEndorsed
                           ? 'bg-emerald-100 text-emerald-800 border border-emerald-300 cursor-default'
-                          : 'bg-gov-navy hover:bg-gov-navy-dark text-white'
+                          : 'bg-gov-navy hover:bg-gov-navy-dark text-white shadow-xs'
                       }`}
                     >
-                      <ShieldCheck className="w-3.5 h-3.5" />
+                      <ShieldCheck className="w-4 h-4" />
                       <span>{isEndorsed ? 'Department Endorsed ✓' : 'Endorse Proposal'}</span>
                     </button>
                   </div>
                 </div>
 
-                <div className="text-xs text-slate-700 space-y-1">
+                <div className="text-sm sm:text-base text-slate-700 space-y-1.5 leading-relaxed">
                   <div>
                     <span className="font-semibold text-slate-800">Proposed Hydraulic Architecture:</span>{' '}
                     {idea.proposedSolution}
@@ -142,13 +137,13 @@ export const ProfessorMentorView: React.FC = () => {
                 </div>
 
                 {/* Technical Advising Input */}
-                <div className="pt-2 border-t border-slate-200 flex items-center space-x-2">
+                <div className="pt-2.5 border-t border-slate-200 flex items-center space-x-2.5">
                   <input
                     type="text"
                     placeholder="Provide technical mentoring remarks for team..."
                     value={adviceText}
                     onChange={e => setAdviceText(e.target.value)}
-                    className="flex-1 p-2 text-xs bg-white border border-slate-300 rounded"
+                    className="flex-1 p-2.5 text-sm sm:text-base bg-white border border-slate-300 rounded-md focus:border-gov-blue focus:ring-1 focus:ring-gov-blue text-slate-900"
                   />
                   <button
                     onClick={() => {
@@ -156,7 +151,7 @@ export const ProfessorMentorView: React.FC = () => {
                       alert(`Mentorship feedback dispatched to ${idea.leadStudentName}: "${adviceText}"`);
                       setAdviceText('');
                     }}
-                    className="px-3 py-2 bg-gov-blue text-white rounded text-xs font-semibold hover:bg-gov-blue-light"
+                    className="px-4 py-2.5 bg-gov-blue text-white rounded-md text-sm sm:text-[15px] font-semibold hover:bg-gov-blue-light transition shadow-xs"
                   >
                     Send Guidance
                   </button>
@@ -169,33 +164,33 @@ export const ProfessorMentorView: React.FC = () => {
 
       {/* Active Project Milestone Monitoring */}
       {activeProject && (
-        <div className="bg-white rounded-lg border border-gov-border shadow-gov p-5 space-y-3">
-          <div className="flex items-center justify-between border-b border-slate-100 pb-2">
-            <h3 className="text-sm font-bold text-gov-navy flex items-center space-x-2">
-              <Award className="w-4 h-4 text-gov-saffron" />
+        <div className="bg-white rounded-lg border border-gov-border shadow-gov p-5 sm:p-6 space-y-3.5">
+          <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+            <h3 className="text-[19px] font-semibold text-gov-navy flex items-center space-x-2">
+              <Award className="w-5 h-5 text-gov-saffron" />
               <span>Mentored Live Pilot: {activeProject.title}</span>
             </h3>
-            <span className="text-xs font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+            <span className="text-xs sm:text-sm font-bold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded border border-emerald-200">
               Phase: {activeProject.milestones[activeProject.currentMilestoneIndex]?.phase || 'Pilot'}
             </span>
           </div>
 
-          <p className="text-xs text-slate-600 leading-relaxed">
+          <p className="text-base text-slate-600 leading-relaxed">
             Faculty supervision of student lab calibrations and safety clearances before on-ground Ranchi Municipal deployment.
           </p>
 
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs">
-            <div className="p-2.5 bg-slate-50 rounded border border-slate-200">
-              <span className="text-slate-500 text-[10px] uppercase font-bold">Completed Milestones</span>
-              <div className="text-sm font-bold text-gov-navy mt-0.5">3 of 5 Delivered</div>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div className="p-3 bg-slate-50 rounded-md border border-slate-200">
+              <span className="text-slate-500 text-xs uppercase font-bold">Completed Milestones</span>
+              <div className="text-base font-bold text-gov-navy mt-1">3 of 5 Delivered</div>
             </div>
-            <div className="p-2.5 bg-slate-50 rounded border border-slate-200">
-              <span className="text-slate-500 text-[10px] uppercase font-bold">Industry Collaborator</span>
-              <div className="text-sm font-bold text-slate-800 mt-0.5">Tata Steel GovTech</div>
+            <div className="p-3 bg-slate-50 rounded-md border border-slate-200">
+              <span className="text-slate-500 text-xs uppercase font-bold">Industry Collaborator</span>
+              <div className="text-base font-bold text-slate-800 mt-1">Tata Steel GovTech</div>
             </div>
-            <div className="p-2.5 bg-slate-50 rounded border border-slate-200">
-              <span className="text-slate-500 text-[10px] uppercase font-bold">Nodal Officer Sync</span>
-              <div className="text-sm font-bold text-emerald-700 mt-0.5">Alok Prasad, IAS</div>
+            <div className="p-3 bg-slate-50 rounded-md border border-slate-200">
+              <span className="text-slate-500 text-xs uppercase font-bold">Nodal Officer Sync</span>
+              <div className="text-base font-bold text-emerald-700 mt-1">Alok Prasad, IAS</div>
             </div>
           </div>
         </div>

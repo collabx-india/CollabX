@@ -82,14 +82,14 @@ export const PublicServicesPage: React.FC = () => {
     <div className="py-8 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto w-full space-y-8">
       {/* Header */}
       <div className="border-b border-slate-200 pb-5">
-        <div className="flex items-center space-x-2 text-xs font-bold uppercase tracking-wider text-gov-blue mb-1">
-          <ShieldCheck className="w-4 h-4 text-gov-saffron" />
+        <div className="flex items-center space-x-2 text-xs sm:text-sm font-bold uppercase tracking-wider text-gov-blue mb-1.5">
+          <ShieldCheck className="w-4 h-4 text-gov-saffron shrink-0" />
           <span>{t('Government of Jharkhand Citizen Portal', 'झारखंड सरकार नागरिक पोर्टल')}</span>
         </div>
-        <h1 className="text-3xl font-black text-gov-navy font-sans tracking-tight">
+        <h1 className="text-[30px] font-bold text-gov-navy leading-tight">
           {t('Public Services Directory', 'सार्वजनिक सेवा निर्देशिका')}
         </h1>
-        <p className="text-sm text-slate-600 mt-1 max-w-2xl">
+        <p className="text-sm sm:text-base text-slate-600 mt-1 max-w-2xl">
           {t(
             'Official directory of citizen civic services, problem reporting, report tracking, and public challenge repositories.',
             'नागरिक नागरिक सेवाओं, समस्या रिपोर्टिंग, स्थिति ट्रैकिंग और सार्वजनिक चुनौतियों की आधिकारिक निर्देशिका।'
@@ -106,19 +106,19 @@ export const PublicServicesPage: React.FC = () => {
               key={service.id}
               className="bg-white rounded-lg border border-slate-200 p-6 flex flex-col justify-between hover:border-gov-navy shadow-xs transition"
             >
-              <div className="space-y-3">
+              <div className="space-y-3.5">
                 <div className="flex items-center justify-between">
-                  <div className="w-10 h-10 rounded-md bg-slate-100 border border-slate-200 text-gov-navy flex items-center justify-center">
-                    <IconComp className="w-5 h-5" />
+                  <div className="w-12 h-12 rounded-lg bg-slate-100 border border-slate-200 text-gov-navy flex items-center justify-center">
+                    <IconComp className="w-6 h-6" />
                   </div>
-                  <span className="text-[11px] font-semibold px-2 py-0.5 rounded bg-slate-100 text-slate-700 border border-slate-200">
+                  <span className="text-xs sm:text-sm font-semibold px-2.5 py-1 rounded-md bg-slate-100 text-slate-700 border border-slate-200">
                     {service.badge}
                   </span>
                 </div>
-                <h2 className="text-lg font-bold text-gov-navy font-sans">
+                <h3 className="text-[19px] font-semibold text-gov-navy leading-snug">
                   {service.title}
-                </h2>
-                <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
+                </h3>
+                <p className="text-sm sm:text-base text-slate-600 leading-relaxed">
                   {service.description}
                 </p>
               </div>
@@ -126,10 +126,10 @@ export const PublicServicesPage: React.FC = () => {
               <div className="mt-6 pt-4 border-t border-slate-100 flex justify-end">
                 <button
                   onClick={() => navigate(service.path)}
-                  className="px-4 py-2 bg-gov-navy hover:bg-slate-800 text-white text-xs font-bold rounded-md flex items-center space-x-1.5 transition focus:ring-2 focus:ring-gov-blue"
+                  className="px-5 py-2.5 bg-gov-navy hover:bg-slate-800 text-white font-semibold text-sm sm:text-base rounded-lg flex items-center space-x-2 transition focus:ring-2 focus:ring-gov-blue"
                 >
                   <span>{service.actionText}</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
+                  <ArrowRight className="w-4 h-4" />
                 </button>
               </div>
             </div>
@@ -138,11 +138,11 @@ export const PublicServicesPage: React.FC = () => {
       </div>
 
       {/* Prototype Notice Footer */}
-      <div className="p-4 bg-slate-100 border border-slate-200 rounded-md text-xs text-slate-600 flex items-center justify-between">
+      <div className="p-4 bg-slate-100 border border-slate-200 rounded-md text-xs sm:text-sm text-slate-600 flex items-center justify-between">
         <span>Proposed GovTech Platform Architecture • Prototype Phase</span>
         <button
           onClick={() => navigate('/about')}
-          className="font-bold text-gov-blue hover:underline text-xs"
+          className="font-bold text-gov-blue hover:underline text-xs sm:text-sm"
         >
           {t('Learn about CollabX →', 'CollabX के बारे में जानें →')}
         </button>

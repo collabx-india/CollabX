@@ -14,13 +14,10 @@ import {
   MapPin, 
   Upload, 
   Sparkles, 
-  AlertTriangle, 
   CheckCircle2, 
-  Info, 
   Copy, 
   Send,
   Volume2,
-  Play,
   Trash2,
   RefreshCw,
   AlertCircle
@@ -50,7 +47,6 @@ export const ProblemReportForm: React.FC<ProblemReportFormProps> = ({ onSuccess,
   const [isRecording, setIsRecording] = useState(false);
   const [recordingSeconds, setRecordingSeconds] = useState(0);
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
-  const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
   const [audioTranscript, setAudioTranscript] = useState('');
   const [voiceError, setVoiceError] = useState<string | null>(null);
   const [isTranscribing, setIsTranscribing] = useState(false);
@@ -101,7 +97,6 @@ export const ProblemReportForm: React.FC<ProblemReportFormProps> = ({ onSuccess,
   const startVoiceRecording = async () => {
     setVoiceError(null);
     setAudioUrl(null);
-    setAudioBlob(null);
     setAudioTranscript('');
     setUsingDemoVoice(false);
     audioChunksRef.current = [];
@@ -125,7 +120,6 @@ export const ProblemReportForm: React.FC<ProblemReportFormProps> = ({ onSuccess,
       mediaRecorder.onstop = () => {
         const audioBlobObj = new Blob(audioChunksRef.current, { type: 'audio/webm' });
         const url = URL.createObjectURL(audioBlobObj);
-        setAudioBlob(audioBlobObj);
         setAudioUrl(url);
         void transcribeRecordedAudio(audioBlobObj);
         // Clean up tracks
@@ -153,7 +147,6 @@ export const ProblemReportForm: React.FC<ProblemReportFormProps> = ({ onSuccess,
       URL.revokeObjectURL(audioUrl);
     }
     setAudioUrl(null);
-    setAudioBlob(null);
     setAudioTranscript('');
     setVoiceError(null);
     setIsTranscribing(false);
@@ -178,7 +171,6 @@ export const ProblemReportForm: React.FC<ProblemReportFormProps> = ({ onSuccess,
   const [capturedPhotoUrl, setCapturedPhotoUrl] = useState<string | null>(null);
   const [photoSource, setPhotoSource] = useState<'upload' | 'camera' | 'sample' | null>(null);
   const [cameraError, setCameraError] = useState<string | null>(null);
-  const [usingDemoImage, setUsingDemoImage] = useState(false);
 
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
@@ -186,7 +178,6 @@ export const ProblemReportForm: React.FC<ProblemReportFormProps> = ({ onSuccess,
   const startCamera = async () => {
     setCameraError(null);
     setCameraActive(true);
-    setUsingDemoImage(false);
 
     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
       setCameraError('Browser Camera API not supported on this device. Use Upload Photo or Demo Image.');
@@ -219,7 +210,6 @@ export const ProblemReportForm: React.FC<ProblemReportFormProps> = ({ onSuccess,
         const dataUrl = canvas.toDataURL('image/jpeg');
         setCapturedPhotoUrl(dataUrl);
         setPhotoSource('camera');
-        setUsingDemoImage(false);
       }
     }
     stopCamera();
@@ -239,7 +229,6 @@ export const ProblemReportForm: React.FC<ProblemReportFormProps> = ({ onSuccess,
       const url = URL.createObjectURL(file);
       setCapturedPhotoUrl(url);
       setPhotoSource('upload');
-      setUsingDemoImage(false);
     }
   };
 
@@ -247,7 +236,6 @@ export const ProblemReportForm: React.FC<ProblemReportFormProps> = ({ onSuccess,
     stopCamera();
     setCapturedPhotoUrl('https://images.unsplash.com/photo-1515694346937-94d85e41e6f0?auto=format&fit=crop&w=600&q=80');
     setPhotoSource('sample');
-    setUsingDemoImage(true);
   };
 
   // ====================================================
@@ -300,21 +288,21 @@ export const ProblemReportForm: React.FC<ProblemReportFormProps> = ({ onSuccess,
   // INSTANT AI ANALYSIS ENGINE
   // ====================================================
   const [aiAnalysis, setAiAnalysis] = useState<any>(null);
-  const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [offlineMessage, setOfflineMessage] = useState<string | null>(null);
 
   useEffect(() => {
     if (description.trim().length > 15) {
-      setIsAnalyzing(true);
       const timer = setTimeout(() => {
         const existingProblems = storageService.getProblems();
         const analysis = AIEngineService.analyzeProblem(title, description, locality, existingProblems);
         setAiAnalysis(analysis);
-        setIsAnalyzing(false);
       }, 500);
       return () => clearTimeout(timer);
     } else {
-      setAiAnalysis(null);
+      const timer = setTimeout(() => {
+        setAiAnalysis(null);
+      }, 0);
+      return () => clearTimeout(timer);
     }
   }, [title, description, locality]);
 
@@ -429,11 +417,11 @@ export const ProblemReportForm: React.FC<ProblemReportFormProps> = ({ onSuccess,
         <div className="p-4 bg-emerald-50 border border-emerald-300 rounded-lg flex items-start space-x-3">
           <CheckCircle2 className="w-6 h-6 text-emerald-600 flex-shrink-0 mt-0.5" />
           <div className="space-y-1">
-            <h2 className="text-base sm:text-lg font-bold text-emerald-950">
+            <h2 className="gov-h2 text-emerald-950">
               Grievance Registered & Automatically Matched
             </h2>
-            <p className="text-xs text-emerald-800">
-              Problem ID: <span className="font-mono font-bold">{submittedProblem.id}</span> • AI has analyzed the report and routed it directly to the designated university department.
+            <p className="gov-body text-emerald-800">
+              Problem ID: <span className="gov-id font-bold">{submittedProblem.id}</span> • AI has analyzed the report and routed it directly to the designated university department.
             </p>
           </div>
         </div>
@@ -443,7 +431,7 @@ export const ProblemReportForm: React.FC<ProblemReportFormProps> = ({ onSuccess,
           <div className="flex items-center justify-between border-b border-slate-200 pb-3">
             <div className="flex items-center space-x-2">
               <Sparkles className="w-5 h-5 text-gov-saffron" />
-              <h3 className="text-sm font-bold uppercase tracking-wider text-gov-navy">
+              <h3 className="gov-h3 text-gov-navy">
                 AI Problem Analysis & Institution Routing
               </h3>
             </div>
@@ -454,17 +442,17 @@ export const ProblemReportForm: React.FC<ProblemReportFormProps> = ({ onSuccess,
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
             <div className="p-3 bg-white rounded border border-slate-200 space-y-1">
-              <span className="text-[10px] text-slate-500 font-bold uppercase block">Category</span>
+              <span className="text-xs text-slate-600 font-semibold uppercase tracking-wider block">Category</span>
               <div className="font-bold text-slate-900 text-sm">{analysis?.category || 'Civic Infrastructure'}</div>
             </div>
 
             <div className="p-3 bg-white rounded border border-slate-200 space-y-1">
-              <span className="text-[10px] text-slate-500 font-bold uppercase block">Priority Level</span>
+              <span className="text-xs text-slate-600 font-semibold uppercase tracking-wider block">Priority Level</span>
               <div className="font-bold text-red-600 text-sm">{analysis?.priority || 'High'}</div>
             </div>
 
             <div className="p-3 bg-white rounded border border-slate-200 space-y-1">
-              <span className="text-[10px] text-slate-500 font-bold uppercase block">Duplicate Check Result</span>
+              <span className="text-xs text-slate-600 font-semibold uppercase tracking-wider block">Duplicate Check Result</span>
               <div className="font-bold text-slate-900 text-sm">
                 {analysis?.duplicateSimilarity && analysis.duplicateSimilarity > 40
                   ? `Similarity ${analysis.duplicateSimilarity}%`
@@ -477,7 +465,7 @@ export const ProblemReportForm: React.FC<ProblemReportFormProps> = ({ onSuccess,
           <div className="p-4 bg-white rounded-lg border-2 border-blue-300 space-y-2">
             <div className="flex flex-wrap items-center justify-between gap-2">
               <div>
-                <span className="text-[10px] uppercase font-bold text-blue-800 tracking-wider block">Matched University:</span>
+                <span className="text-xs uppercase font-semibold text-blue-800 tracking-wider block">Matched University:</span>
                 <span className="text-base font-bold text-gov-navy block mt-0.5">
                   {submittedProblem.matchedUniversity || 'Birla Institute of Technology (BIT) Mesra'}
                 </span>
@@ -529,55 +517,55 @@ export const ProblemReportForm: React.FC<ProblemReportFormProps> = ({ onSuccess,
   }
 
   return (
-    <div className="bg-white rounded-lg border border-gov-border shadow-gov p-4 sm:p-6 max-w-4xl mx-auto">
+    <div className="bg-white rounded-lg border border-gov-border shadow-gov p-5 sm:p-7 max-w-4xl mx-auto">
       <div className="border-b border-gov-border pb-4 mb-6">
-        <div className="flex items-center space-x-2 text-gov-saffron text-xs font-bold uppercase tracking-wider">
+        <div className="flex items-center space-x-2 text-gov-saffron text-sm font-bold uppercase tracking-wider">
           <Sparkles className="w-4 h-4" />
           <span>{t('Voice, Camera & GPS Enabled Reporting', 'ध्वनि, कैमरा एवं जीपीएस आधारित रिपोर्टिंग')}</span>
         </div>
-        <h2 className="text-xl sm:text-2xl font-bold text-gov-navy mt-1">
+        <h2 className="gov-h2 mt-1">
           {t('Report a Civic Problem', 'नागरिक समस्या दर्ज करें')}
         </h2>
-        <p className="text-xs text-slate-500 mt-1">
+        <p className="gov-body text-slate-600 mt-1">
           {t('Record voice notes, capture live photos, and pinpoint browser GPS coordinates.', 'अपनी भाषा में समस्या का विवरण दें।')}
         </p>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
         {offlineMessage && (
-          <div className="rounded border border-amber-300 bg-amber-50 px-3 py-2 text-xs font-semibold text-amber-900" role="status">
+          <div className="rounded border border-amber-300 bg-amber-50 px-4 py-2.5 text-sm font-semibold text-amber-900" role="status">
             {offlineMessage}
           </div>
         )}
         {/* ==================================================== */}
         {/* 1. VOICE RECORDING SECTION (MediaRecorder API)       */}
         {/* ==================================================== */}
-        <div className="p-4 bg-slate-50 rounded-lg border border-slate-200 space-y-3">
+        <div className="p-4 sm:p-5 bg-slate-50 rounded-lg border border-slate-200 space-y-3.5">
           <div className="flex items-center justify-between">
-            <label className="text-xs font-bold text-gov-navy uppercase tracking-wider flex items-center space-x-1.5">
-              <Mic className="w-4 h-4 text-gov-saffron" />
+            <h3 className="gov-h3 flex items-center space-x-2">
+              <Mic className="w-5 h-5 text-gov-saffron" />
               <span>1. Voice Note Recording (Browser MediaRecorder API)</span>
-            </label>
-            <span className="text-[10px] text-slate-500 font-mono">Microphone Hardware Access</span>
+            </h3>
+            <span className="gov-helper font-mono">Microphone Hardware Access</span>
           </div>
 
-          <div className="flex flex-wrap items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2.5">
             {!isRecording ? (
               <button
                 type="button"
                 onClick={startVoiceRecording}
-                className="py-2 px-3 bg-gov-navy hover:bg-gov-navy-dark text-white rounded text-xs font-bold flex items-center space-x-1.5 transition shadow-xs"
+                className="py-2.5 px-4 bg-gov-navy hover:bg-gov-navy-dark text-white rounded gov-button flex items-center space-x-2 transition shadow-xs"
               >
-                <Mic className="w-3.5 h-3.5 text-gov-saffron" />
+                <Mic className="w-4 h-4 text-gov-saffron" />
                 <span>🎙️ Record Voice (Browser Mic)</span>
               </button>
             ) : (
               <button
                 type="button"
                 onClick={stopVoiceRecording}
-                className="py-2 px-3 bg-red-600 hover:bg-red-700 text-white rounded text-xs font-bold flex items-center space-x-1.5 animate-pulse shadow-xs"
+                className="py-2.5 px-4 bg-red-600 hover:bg-red-700 text-white rounded gov-button flex items-center space-x-2 animate-pulse shadow-xs"
               >
-                <Square className="w-3.5 h-3.5" />
+                <Square className="w-4 h-4" />
                 <span>⏹️ Stop Recording ({recordingSeconds}s)</span>
               </button>
             )}
@@ -586,9 +574,9 @@ export const ProblemReportForm: React.FC<ProblemReportFormProps> = ({ onSuccess,
               <button
                 type="button"
                 onClick={deleteVoiceRecording}
-                className="py-2 px-3 bg-red-100 hover:bg-red-200 text-red-800 border border-red-300 rounded text-xs font-bold flex items-center space-x-1 transition"
+                className="py-2.5 px-4 bg-red-100 hover:bg-red-200 text-red-800 border border-red-300 rounded gov-button flex items-center space-x-1.5 transition"
               >
-                <Trash2 className="w-3.5 h-3.5" />
+                <Trash2 className="w-4 h-4" />
                 <span>Delete Recording</span>
               </button>
             )}
@@ -596,7 +584,7 @@ export const ProblemReportForm: React.FC<ProblemReportFormProps> = ({ onSuccess,
             <button
               type="button"
               onClick={handleUseDemoVoice}
-              className="py-2 px-3 bg-amber-100 hover:bg-amber-200 text-amber-900 border border-amber-300 rounded text-xs font-bold flex items-center space-x-1 transition"
+              className="py-2.5 px-4 bg-amber-100 hover:bg-amber-200 text-amber-900 border border-amber-300 rounded gov-button flex items-center space-x-1.5 transition"
             >
               <span>🎙️ Use Sample Voice Audio</span>
             </button>
@@ -604,7 +592,7 @@ export const ProblemReportForm: React.FC<ProblemReportFormProps> = ({ onSuccess,
 
           {/* Error Message for Voice */}
           {voiceError && (
-            <div className="p-2.5 bg-red-50 border border-red-200 rounded text-xs text-red-700 flex items-center space-x-2">
+            <div className="p-3 bg-red-50 border border-red-200 rounded text-sm text-red-700 flex items-center space-x-2">
               <AlertCircle className="w-4 h-4 text-red-600 flex-shrink-0" />
               <span>{voiceError}</span>
             </div>
@@ -612,21 +600,21 @@ export const ProblemReportForm: React.FC<ProblemReportFormProps> = ({ onSuccess,
 
           {/* Real Audio Player */}
           {audioUrl && (
-            <div className="p-3 bg-white rounded border border-slate-300 space-y-1">
-              <div className="flex items-center justify-between text-xs font-bold text-gov-navy">
+            <div className="p-3.5 bg-white rounded border border-slate-300 space-y-1.5">
+              <div className="flex items-center justify-between text-sm font-semibold text-gov-navy">
                 <span>Recorded Audio Preview:</span>
-                <span className="text-[11px] text-emerald-600 font-mono">✅ Audio Captured ({recordingSeconds}s)</span>
+                <span className="text-xs text-emerald-700 font-mono">✅ Audio Captured ({recordingSeconds}s)</span>
               </div>
-              <audio controls src={audioUrl} className="w-full h-8 mt-1" />
+              <audio controls src={audioUrl} className="w-full h-9 mt-1" />
             </div>
           )}
 
           {/* Audio Transcript feedback if demo or transcribed */}
           {audioTranscript && (
-            <div className="p-2.5 bg-amber-50 rounded border border-amber-200 text-xs text-amber-900 flex items-start space-x-2">
+            <div className="p-2.5 bg-amber-50 rounded border border-amber-200 text-sm text-amber-900 flex items-start space-x-2">
               <Volume2 className="w-4 h-4 text-gov-saffron flex-shrink-0 mt-0.5" />
               <div className="flex-1 space-y-1.5">
-                <label htmlFor="voice-transcript" className="font-bold block">Local Transcript (editable):</label>
+                <label htmlFor="voice-transcript" className="gov-label block">Local Transcript (editable):</label>
                 <textarea
                   id="voice-transcript"
                   value={audioTranscript}
@@ -635,9 +623,9 @@ export const ProblemReportForm: React.FC<ProblemReportFormProps> = ({ onSuccess,
                     setDescription(event.target.value);
                   }}
                   rows={3}
-                  className="w-full rounded border border-amber-300 bg-white p-2 text-xs text-slate-800 outline-none focus:border-gov-saffron"
+                  className="w-full rounded border border-amber-300 bg-white p-2.5 text-base text-slate-800 outline-none focus:border-gov-saffron"
                 />
-                {usingDemoVoice && <span className="block text-[10px] text-amber-700 font-semibold mt-0.5">• Preset Sample Audio Applied</span>}
+                {usingDemoVoice && <span className="block gov-helper text-amber-700 mt-0.5">• Preset Sample Audio Applied</span>}
               </div>
             </div>
           )}
@@ -652,13 +640,13 @@ export const ProblemReportForm: React.FC<ProblemReportFormProps> = ({ onSuccess,
         {/* ==================================================== */}
         {/* 2. CAMERA CAPTURE SECTION (getUserMedia Video Stream) */}
         {/* ==================================================== */}
-        <div className="p-4 bg-slate-50 rounded-lg border border-slate-200 space-y-3">
+        <div className="p-4 sm:p-5 bg-slate-50 rounded-lg border border-slate-200 space-y-3.5">
           <div className="flex items-center justify-between">
-            <label className="text-xs font-bold text-gov-navy uppercase tracking-wider flex items-center space-x-1.5">
-              <Camera className="w-4 h-4 text-gov-blue" />
+            <h3 className="gov-h3 flex items-center space-x-2">
+              <Camera className="w-5 h-5 text-gov-blue" />
               <span>2. Camera Photo Evidence (Browser Video Stream)</span>
-            </label>
-            <span className="text-[10px] text-slate-500 font-mono">Camera Hardware Access</span>
+            </h3>
+            <span className="gov-helper font-mono">Camera Hardware Access</span>
           </div>
 
           {/* Live Video Preview Stream */}
@@ -669,7 +657,7 @@ export const ProblemReportForm: React.FC<ProblemReportFormProps> = ({ onSuccess,
                 <button
                   type="button"
                   onClick={capturePhoto}
-                  className="py-2 px-4 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded shadow-md flex items-center space-x-1.5"
+                  className="py-2.5 px-4 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-sm sm:text-base rounded-md shadow-md flex items-center space-x-2"
                 >
                   <Camera className="w-4 h-4" />
                   <span>📷 Take Snapshot</span>
@@ -677,7 +665,7 @@ export const ProblemReportForm: React.FC<ProblemReportFormProps> = ({ onSuccess,
                 <button
                   type="button"
                   onClick={stopCamera}
-                  className="py-2 px-3 bg-slate-800 text-white font-bold text-xs rounded"
+                  className="py-2.5 px-4 bg-slate-800 text-white font-semibold text-sm sm:text-base rounded-md"
                 >
                   Cancel
                 </button>
@@ -686,18 +674,18 @@ export const ProblemReportForm: React.FC<ProblemReportFormProps> = ({ onSuccess,
           )}
 
           {!cameraActive && (
-            <div className="flex flex-wrap items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2.5">
               <button
                 type="button"
                 onClick={startCamera}
-                className="py-2 px-3 bg-gov-blue hover:bg-gov-blue-light text-white rounded text-xs font-bold flex items-center space-x-1.5 transition shadow-xs"
+                className="py-2.5 px-4 bg-gov-blue hover:bg-gov-blue-light text-white rounded text-sm sm:text-base font-semibold flex items-center space-x-2 transition shadow-xs"
               >
-                <Camera className="w-3.5 h-3.5" />
+                <Camera className="w-4 h-4" />
                 <span>📷 Open Live Camera</span>
               </button>
 
-              <label className="py-2 px-3 bg-white hover:bg-slate-100 text-slate-800 border border-slate-300 rounded text-xs font-bold flex items-center space-x-1.5 cursor-pointer shadow-xs">
-                <Upload className="w-3.5 h-3.5 text-slate-600" />
+              <label className="py-2.5 px-4 bg-white hover:bg-slate-100 text-slate-800 border border-slate-300 rounded text-sm sm:text-base font-semibold flex items-center space-x-2 cursor-pointer shadow-xs">
+                <Upload className="w-4 h-4 text-slate-600" />
                 <span>Upload from Device</span>
                 <input type="file" accept="image/*" onChange={handleFileUpload} className="hidden" />
               </label>
@@ -705,7 +693,7 @@ export const ProblemReportForm: React.FC<ProblemReportFormProps> = ({ onSuccess,
               <button
                 type="button"
                 onClick={handleUseDemoImage}
-                className="py-2 px-3 bg-amber-100 hover:bg-amber-200 text-amber-900 border border-amber-300 rounded text-xs font-bold flex items-center space-x-1 transition"
+                className="py-2.5 px-4 bg-amber-100 hover:bg-amber-200 text-amber-900 border border-amber-300 rounded text-sm font-semibold flex items-center space-x-1.5 transition"
               >
                 <span>📷 Use Sample Image</span>
               </button>
@@ -713,7 +701,7 @@ export const ProblemReportForm: React.FC<ProblemReportFormProps> = ({ onSuccess,
           )}
 
           {cameraError && (
-            <div className="p-2.5 bg-red-50 border border-red-200 rounded text-xs text-red-700 flex items-center space-x-2">
+            <div className="p-3 bg-red-50 border border-red-200 rounded text-sm text-red-700 flex items-center space-x-2">
               <AlertCircle className="w-4 h-4 text-red-600 flex-shrink-0" />
               <span>{cameraError}</span>
             </div>
@@ -721,26 +709,26 @@ export const ProblemReportForm: React.FC<ProblemReportFormProps> = ({ onSuccess,
 
           {/* Empty Photo State */}
           {!capturedPhotoUrl && !cameraActive && (
-            <div className="p-3 bg-white rounded border border-dashed border-slate-300 text-xs text-slate-500 text-center space-y-0.5">
-              <div className="font-semibold text-slate-700">No photo attached yet.</div>
-              <div className="text-[11px] text-slate-500">Capture a photo or upload an image as evidence.</div>
+            <div className="p-4 bg-white rounded border border-dashed border-slate-300 text-sm text-slate-600 text-center space-y-1">
+              <div className="font-semibold text-slate-800">No photo attached yet.</div>
+              <div className="text-xs text-slate-500">Capture a photo or upload an image as evidence.</div>
             </div>
           )}
 
           {/* Captured / Attached Photo Display */}
           {capturedPhotoUrl && !cameraActive && (
-            <div className="flex items-center space-x-3 p-2.5 bg-white rounded border border-slate-300">
+            <div className="flex items-center space-x-3.5 p-3 bg-white rounded border border-slate-300">
               <img
                 src={capturedPhotoUrl}
                 alt="Captured civic evidence"
                 className="w-24 h-20 object-cover rounded border border-slate-300 flex-shrink-0"
               />
-              <div className="text-xs text-slate-600 space-y-1">
-                <div className="font-bold text-gov-navy flex items-center space-x-1">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-gov-green" />
+              <div className="text-sm text-slate-700 space-y-1">
+                <div className="font-bold text-gov-navy flex items-center space-x-1.5">
+                  <CheckCircle2 className="w-4 h-4 text-gov-green" />
                   <span>Photo Evidence Attached</span>
                 </div>
-                <div className="text-[11px] text-slate-500 font-mono">
+                <div className="text-xs text-slate-500 font-mono">
                   {photoSource === 'upload'
                     ? 'Photo uploaded from device'
                     : photoSource === 'camera'
@@ -751,10 +739,9 @@ export const ProblemReportForm: React.FC<ProblemReportFormProps> = ({ onSuccess,
                   type="button"
                   onClick={() => {
                     setCapturedPhotoUrl(null);
-                    setUsingDemoImage(false);
                     setPhotoSource(null);
                   }}
-                  className="text-[11px] text-red-600 hover:underline font-semibold"
+                  className="text-xs text-red-600 hover:underline font-semibold"
                 >
                   Remove Photo
                 </button>
@@ -766,54 +753,54 @@ export const ProblemReportForm: React.FC<ProblemReportFormProps> = ({ onSuccess,
         {/* ==================================================== */}
         {/* 3. GPS LOCATION SECTION (Geolocation API)           */}
         {/* ==================================================== */}
-        <div className="p-4 bg-slate-50 rounded-lg border border-slate-200 space-y-3">
+        <div className="p-4 sm:p-5 bg-slate-50 rounded-lg border border-slate-200 space-y-3.5">
           <div className="flex items-center justify-between">
-            <label className="text-xs font-bold text-gov-navy uppercase tracking-wider flex items-center space-x-1.5">
-              <MapPin className="w-4 h-4 text-gov-green" />
+            <h3 className="gov-h3 flex items-center space-x-2">
+              <MapPin className="w-5 h-5 text-gov-green" />
               <span>3. Geolocation Geotagging (Browser Geolocation API)</span>
-            </label>
-            <span className="text-[10px] text-slate-500 font-mono">GPS Hardware Access</span>
+            </h3>
+            <span className="gov-helper font-mono">GPS Hardware Access</span>
           </div>
 
-          <div className="flex flex-wrap items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2.5">
             <button
               type="button"
               onClick={fetchBrowserGPS}
               disabled={isLocating}
-              className="py-2 px-3 bg-gov-green hover:bg-emerald-700 text-white rounded text-xs font-bold flex items-center space-x-1.5 transition shadow-xs"
+              className="py-2.5 px-4 bg-gov-green hover:bg-emerald-700 text-white rounded gov-button flex items-center space-x-2 transition shadow-xs"
             >
-              <MapPin className="w-3.5 h-3.5" />
+              <MapPin className="w-4 h-4" />
               <span>{isLocating ? 'Acquiring Satellite Fix...' : '📍 Use Browser GPS Location'}</span>
             </button>
 
             <button
               type="button"
               onClick={handleUseDemoLocation}
-              className="py-2 px-3 bg-amber-100 hover:bg-amber-200 text-amber-900 border border-amber-300 rounded text-xs font-bold flex items-center space-x-1 transition"
+              className="py-2.5 px-4 bg-amber-100 hover:bg-amber-200 text-amber-900 border border-amber-300 rounded gov-button flex items-center space-x-1.5 transition"
             >
               <span>📍 Use Sample Location</span>
             </button>
           </div>
 
           {locationError && (
-            <div className="p-2.5 bg-red-50 border border-red-200 rounded text-xs text-red-700 flex items-center space-x-2">
+            <div className="p-3 bg-red-50 border border-red-200 rounded text-sm text-red-700 flex items-center space-x-2">
               <AlertCircle className="w-4 h-4 text-red-600 flex-shrink-0" />
               <span>{locationError}</span>
             </div>
           )}
 
           {locationSuccess && coordinates && (
-            <div className="p-2.5 bg-emerald-50 border border-emerald-200 rounded text-xs text-emerald-900 flex items-center justify-between">
+            <div className="p-3 bg-emerald-50 border border-emerald-200 rounded text-sm sm:text-base text-emerald-900 flex items-center justify-between">
               <div className="flex items-center space-x-2">
                 <CheckCircle2 className="w-4 h-4 text-gov-green flex-shrink-0" />
                 <span>
                   <span className="font-bold">✅ Location Captured:</span> Latitude{' '}
-                  <span className="font-mono font-bold">{coordinates.lat}° N</span>, Longitude{' '}
-                  <span className="font-mono font-bold">{coordinates.lng}° E</span>
+                  <span className="gov-id font-bold">{coordinates.lat}° N</span>, Longitude{' '}
+                  <span className="gov-id font-bold">{coordinates.lng}° E</span>
                 </span>
               </div>
               {usingDemoLocation && (
-                <span className="text-[10px] font-bold bg-amber-200 text-amber-900 px-2 py-0.5 rounded">
+                <span className="gov-badge bg-amber-200 text-amber-900">
                   Sample Location
                 </span>
               )}
@@ -823,7 +810,7 @@ export const ProblemReportForm: React.FC<ProblemReportFormProps> = ({ onSuccess,
 
         {/* Text Title Input */}
         <div>
-          <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
+          <label className="gov-label block mb-1.5">
             {t('Problem Title / Brief Description *', 'समस्या का शीर्षक / संक्षिप्त विवरण *')}
           </label>
           <input
@@ -832,13 +819,13 @@ export const ProblemReportForm: React.FC<ProblemReportFormProps> = ({ onSuccess,
             placeholder="e.g. Chronic monsoon waterlogging in Harmu bypass road"
             value={title}
             onChange={e => setTitle(e.target.value)}
-            className="w-full p-2.5 text-sm bg-white border border-slate-300 rounded focus:border-gov-blue focus:ring-1 focus:ring-gov-blue"
+            className="w-full p-3 text-base text-slate-900 bg-white border border-slate-300 rounded-md focus:border-gov-blue focus:ring-1 focus:ring-gov-blue"
           />
         </div>
 
         {/* Detailed Description */}
         <div>
-          <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
+          <label className="gov-label block mb-1.5">
             {t('Describe the Problem in Your Own Words *', 'समस्या का पूरा विवरण लिखें *')}
           </label>
           <textarea
@@ -847,20 +834,20 @@ export const ProblemReportForm: React.FC<ProblemReportFormProps> = ({ onSuccess,
             placeholder="Describe what happens, how long water remains stagnant, what facilities are impacted..."
             value={description}
             onChange={e => setDescription(e.target.value)}
-            className="w-full p-2.5 text-sm bg-white border border-slate-300 rounded focus:border-gov-blue focus:ring-1 focus:ring-gov-blue leading-relaxed"
+            className="w-full p-3 text-base text-slate-900 bg-white border border-slate-300 rounded-md focus:border-gov-blue focus:ring-1 focus:ring-gov-blue leading-relaxed"
           ></textarea>
         </div>
 
         {/* Location Details: District & Locality */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
+            <label className="gov-label block mb-1.5">
               {t('District *', 'जिला *')}
             </label>
             <select
               value={district}
               onChange={e => setDistrict(e.target.value)}
-              className="w-full p-2 text-sm bg-white border border-slate-300 rounded focus:border-gov-blue"
+              className="w-full p-3 text-base text-slate-900 bg-white border border-slate-300 rounded-md focus:border-gov-blue"
             >
               <option value="Ranchi">Ranchi (राँची)</option>
               <option value="Dhanbad">Dhanbad (धनबाद)</option>
@@ -873,7 +860,7 @@ export const ProblemReportForm: React.FC<ProblemReportFormProps> = ({ onSuccess,
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
+            <label className="gov-label block mb-1.5">
               {t('Panchayat / Locality / Ward *', 'पंचायत / मोहल्ला / वार्ड *')}
             </label>
             <input
@@ -882,7 +869,7 @@ export const ProblemReportForm: React.FC<ProblemReportFormProps> = ({ onSuccess,
               placeholder="e.g. Harmu Bypass, Ward 14"
               value={locality}
               onChange={e => setLocality(e.target.value)}
-              className="w-full p-2 text-sm bg-white border border-slate-300 rounded focus:border-gov-blue"
+              className="w-full p-3 text-base text-slate-900 bg-white border border-slate-300 rounded-md focus:border-gov-blue"
             />
           </div>
         </div>
@@ -890,26 +877,26 @@ export const ProblemReportForm: React.FC<ProblemReportFormProps> = ({ onSuccess,
         {/* Optional Context */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label className="block text-xs font-semibold text-slate-600 mb-1">
+            <label className="gov-label block mb-1">
               {t('Estimated Affected Population', 'अनुमानित प्रभावित आबादी')}
             </label>
             <input
               type="number"
               value={affectedPop}
               onChange={e => setAffectedPop(Number(e.target.value))}
-              className="w-full p-2 text-sm bg-white border border-slate-300 rounded"
+              className="w-full p-2.5 text-base text-slate-900 bg-white border border-slate-300 rounded-md"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-600 mb-1">
+            <label className="gov-label block mb-1">
               {t('Frequency of Occurrence', 'समस्या की आवृत्ति')}
             </label>
             <input
               type="text"
               value={frequency}
               onChange={e => setFrequency(e.target.value)}
-              className="w-full p-2 text-sm bg-white border border-slate-300 rounded"
+              className="w-full p-2.5 text-base text-slate-900 bg-white border border-slate-300 rounded-md"
             />
           </div>
         </div>
@@ -918,64 +905,64 @@ export const ProblemReportForm: React.FC<ProblemReportFormProps> = ({ onSuccess,
         {/* INSTANT AI ANALYSIS CARD (Decision Support)          */}
         {/* ==================================================== */}
         {aiAnalysis && (
-          <div className="bg-slate-50 rounded-lg border-2 border-blue-200 p-4 space-y-3">
+          <div className="bg-slate-50 rounded-lg border-2 border-blue-200 p-4 sm:p-5 space-y-3">
             <div className="flex items-center justify-between border-b border-blue-200 pb-2">
               <div className="flex items-center space-x-2">
-                <Sparkles className="w-4 h-4 text-gov-blue" />
-                <span className="text-xs font-bold uppercase tracking-wider text-gov-navy">
+                <Sparkles className="w-5 h-5 text-gov-blue" />
+                <span className="text-sm sm:text-base font-bold uppercase tracking-wider text-gov-navy">
                   AI Analysis — Decision Support Assistant
                 </span>
               </div>
-              <span className="text-[10px] bg-blue-100 text-blue-900 px-2 py-0.5 rounded font-semibold">
+              <span className="text-xs sm:text-sm bg-blue-100 text-blue-900 px-2.5 py-0.5 rounded font-semibold">
                 Confidence: {Math.round(aiAnalysis.confidence * 100)}%
               </span>
             </div>
 
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
-              <div className="p-2 bg-white rounded border border-slate-200">
-                <span className="text-[10px] text-slate-500 font-semibold uppercase">Category</span>
-                <div className="font-bold text-gov-navy mt-0.5">{aiAnalysis.category}</div>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm">
+              <div className="p-2.5 bg-white rounded border border-slate-200">
+                <span className="text-xs text-slate-500 font-semibold uppercase">Category</span>
+                <div className="font-bold text-gov-navy mt-0.5 text-sm sm:text-base">{aiAnalysis.category}</div>
               </div>
 
-              <div className="p-2 bg-white rounded border border-slate-200">
-                <span className="text-[10px] text-slate-500 font-semibold uppercase">Severity</span>
-                <div className="font-bold text-gov-saffron mt-0.5">{aiAnalysis.severity} / 100</div>
+              <div className="p-2.5 bg-white rounded border border-slate-200">
+                <span className="text-xs text-slate-500 font-semibold uppercase">Severity</span>
+                <div className="font-bold text-gov-saffron mt-0.5 text-sm sm:text-base">{aiAnalysis.severity} / 100</div>
               </div>
 
-              <div className="p-2 bg-white rounded border border-slate-200">
-                <span className="text-[10px] text-slate-500 font-semibold uppercase">Priority</span>
-                <div className="font-bold text-red-600 mt-0.5">{aiAnalysis.priority}</div>
+              <div className="p-2.5 bg-white rounded border border-slate-200">
+                <span className="text-xs text-slate-500 font-semibold uppercase">Priority</span>
+                <div className="font-bold text-red-600 mt-0.5 text-sm sm:text-base">{aiAnalysis.priority}</div>
               </div>
 
-              <div className="p-2 bg-white rounded border border-slate-200">
-                <span className="text-[10px] text-slate-500 font-semibold uppercase">Duplicate Similarity</span>
-                <div className="font-bold text-purple-700 mt-0.5">{aiAnalysis.duplicateSimilarity}%</div>
+              <div className="p-2.5 bg-white rounded border border-slate-200">
+                <span className="text-xs text-slate-500 font-semibold uppercase">Duplicate Similarity</span>
+                <div className="font-bold text-purple-700 mt-0.5 text-sm sm:text-base">{aiAnalysis.duplicateSimilarity}%</div>
               </div>
             </div>
 
             {aiAnalysis.duplicateCandidateTitle && (
-              <div className="p-2 bg-amber-50 rounded border border-amber-300 text-xs text-amber-900 flex items-start space-x-2">
-                <Copy className="w-4 h-4 text-amber-700 flex-shrink-0 mt-0.5" />
+              <div className="p-3 bg-amber-50 rounded border border-amber-300 text-sm text-amber-900 flex items-start space-x-2.5">
+                <Copy className="w-5 h-5 text-amber-700 flex-shrink-0 mt-0.5" />
                 <div>
                   <span className="font-bold">Possible Duplicate Flagged ({aiAnalysis.duplicateSimilarity}%):</span>{' '}
-                  Grievance #{aiAnalysis.duplicateCandidateId} — "{aiAnalysis.duplicateCandidateTitle}".
-                  <span className="block text-[11px] text-amber-800 mt-0.5">
+                  Grievance <span className="font-mono font-bold">#{aiAnalysis.duplicateCandidateId}</span> — "{aiAnalysis.duplicateCandidateTitle}".
+                  <span className="block text-xs sm:text-sm text-amber-800 mt-0.5">
                     Government officer will inspect for consolidation.
                   </span>
                 </div>
               </div>
             )}
 
-            <div className="p-2.5 bg-white rounded border border-blue-200 text-xs space-y-1">
-              <div className="flex items-center justify-between">
-                <span className="font-bold text-gov-navy">
+            <div className="p-3 bg-white rounded border border-blue-200 text-sm space-y-1.5">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <span className="font-bold text-gov-navy text-sm sm:text-base">
                   Target Match: {aiAnalysis.matchedUniversity || 'Birla Institute of Technology (BIT) Mesra'}
                 </span>
-                <span className="text-[11px] font-semibold text-blue-800 bg-blue-50 px-2 py-0.5 rounded border border-blue-200">
+                <span className="text-xs sm:text-sm font-semibold text-blue-800 bg-blue-50 px-2.5 py-0.5 rounded border border-blue-200">
                   {aiAnalysis.matchedDepartment || 'Department of Civil Engineering'}
                 </span>
               </div>
-              <p className="text-[11px] text-slate-600 italic">
+              <p className="text-xs sm:text-sm text-slate-600 italic">
                 {aiAnalysis.matchingReason}
               </p>
             </div>
@@ -988,7 +975,7 @@ export const ProblemReportForm: React.FC<ProblemReportFormProps> = ({ onSuccess,
             <button
               type="button"
               onClick={onCancel}
-              className="px-4 py-2 border border-slate-300 text-slate-700 rounded text-xs font-semibold hover:bg-slate-100"
+              className="px-5 py-2.5 border border-slate-300 text-slate-700 rounded-md text-sm sm:text-base font-semibold hover:bg-slate-100"
             >
               {t('Cancel', 'रद्द करें')}
             </button>
@@ -996,9 +983,9 @@ export const ProblemReportForm: React.FC<ProblemReportFormProps> = ({ onSuccess,
 
           <button
             type="submit"
-            className="px-6 py-2.5 bg-gov-navy hover:bg-gov-navy-dark text-white rounded text-sm font-bold flex items-center space-x-2 transition shadow-sm"
+            className="px-6 py-3 bg-gov-navy hover:bg-gov-navy-dark text-white rounded-md text-base font-bold flex items-center space-x-2 transition shadow-sm"
           >
-            <Send className="w-4 h-4" />
+            <Send className="w-5 h-5" />
             <span>{t('Submit Grievance to Portal', 'समस्या आधिकारिक रूप से दर्ज करें')}</span>
           </button>
         </div>
