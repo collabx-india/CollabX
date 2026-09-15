@@ -3,7 +3,7 @@ import { ProblemReport } from '../../types';
 import { AIEngineService } from '../../services/aiEngineService';
 import { collabxApi } from '../../services/collabxApi';
 import { indexedDbService } from '../../services/indexedDbService';
-import { localTranscriptionService } from '../../services/localTranscriptionService';
+import { localTranscriptionService, TranscriptionProgressState } from '../../services/localTranscriptionService';
 import { storageService } from '../../services/storageService';
 import { useAuth } from '../../context/AuthContext';
 import { useAccessibility } from '../../context/AccessibilityContext';
@@ -50,6 +50,7 @@ export const ProblemReportForm: React.FC<ProblemReportFormProps> = ({ onSuccess,
   const [audioTranscript, setAudioTranscript] = useState('');
   const [voiceError, setVoiceError] = useState<string | null>(null);
   const [isTranscribing, setIsTranscribing] = useState(false);
+  const [transcriptionProgress, setTranscriptionProgress] = useState<TranscriptionProgressState | null>(null);
   const [usingDemoVoice, setUsingDemoVoice] = useState(false);
 
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
@@ -64,8 +65,11 @@ export const ProblemReportForm: React.FC<ProblemReportFormProps> = ({ onSuccess,
 
     setIsTranscribing(true);
     setVoiceError(null);
+    setTranscriptionProgress(null);
     try {
-      const transcript = await localTranscriptionService.transcribe(blob);
+      const transcript = await localTranscriptionService.transcribe(blob, state => {
+        setTranscriptionProgress(state);
+      });
       if (transcript) {
         setAudioTranscript(transcript);
         setDescription(transcript);
@@ -74,7 +78,7 @@ export const ProblemReportForm: React.FC<ProblemReportFormProps> = ({ onSuccess,
       }
     } catch (error) {
       console.error('[ProblemReportForm] Local transcription error:', error);
-      setVoiceError('Local transcription could not run. Your audio stays on this device; you can type the report normally below.');
+      setVoiceError("Local voice transcription couldn't complete on this device. Your recording remains on this device. You can type the report manually.");
     } finally {
       setIsTranscribing(false);
     }
@@ -98,6 +102,7 @@ export const ProblemReportForm: React.FC<ProblemReportFormProps> = ({ onSuccess,
     setVoiceError(null);
     setAudioUrl(null);
     setAudioTranscript('');
+    setTranscriptionProgress(null);
     setUsingDemoVoice(false);
     audioChunksRef.current = [];
 
@@ -151,6 +156,7 @@ export const ProblemReportForm: React.FC<ProblemReportFormProps> = ({ onSuccess,
     setAudioTranscript('');
     setVoiceError(null);
     setIsTranscribing(false);
+    setTranscriptionProgress(null);
     setUsingDemoVoice(false);
   };
 
@@ -664,9 +670,26 @@ export const ProblemReportForm: React.FC<ProblemReportFormProps> = ({ onSuccess,
             </div>
           )}
           {isTranscribing && (
-            <div className="p-2.5 bg-blue-50 rounded border border-blue-200 text-xs text-blue-800 flex items-center space-x-2">
-              <RefreshCw className="w-4 h-4 animate-spin flex-shrink-0" />
-              <span>Loading Whisper locally and transcribing on this device...</span>
+            <div className="p-3 bg-blue-50 rounded-md border border-blue-200 text-xs sm:text-sm text-blue-900 space-y-2">
+              <div className="flex items-center space-x-2 font-semibold text-blue-950">
+                <RefreshCw className="w-4 h-4 animate-spin text-blue-700 flex-shrink-0" />
+                <span>
+                  {transcriptionProgress?.message.split('\n')[0] || 'Preparing voice recognition...'}
+                </span>
+              </div>
+              {transcriptionProgress?.message.includes('\n') && (
+                <div className="text-xs text-blue-800 font-mono font-medium pl-6">
+                  {transcriptionProgress.message.split('\n')[1]}
+                </div>
+              )}
+              {typeof transcriptionProgress?.percent === 'number' && (
+                <div className="w-full bg-blue-200 rounded-full h-2 overflow-hidden">
+                  <div
+                    className="bg-blue-600 h-2 rounded-full transition-all duration-200 ease-out"
+                    style={{ width: `${transcriptionProgress.percent}%` }}
+                  />
+                </div>
+              )}
             </div>
           )}
         </div>

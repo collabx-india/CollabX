@@ -1,3 +1,11 @@
+export type TranscriptionProgressState = {
+  stage: 'preparing' | 'downloading' | 'initializing' | 'transcribing' | 'completed' | 'error';
+  message: string;
+  percent?: number;
+};
+
+export type ProgressCallback = (state: TranscriptionProgressState) => void;
+
 type TranscriptionResult = { text: string };
 type LocalTranscriber = (
   audio: Float32Array,
@@ -11,10 +19,12 @@ interface ActiveTranscriber {
   transcribe: LocalTranscriber;
 }
 
+const PRIMARY_MODEL = 'onnx-community/whisper-tiny.en';
+
 let activeTranscriberInstance: ActiveTranscriber | null = null;
 let activeTranscriberPromise: Promise<ActiveTranscriber> | null = null;
 
-const isWebGpuAvailable = async (): Promise<boolean> => {
+export const isWebGpuAvailable = async (): Promise<boolean> => {
   if (typeof navigator === 'undefined' || !('gpu' in navigator) || !navigator.gpu) {
     return false;
   }
@@ -23,6 +33,23 @@ const isWebGpuAvailable = async (): Promise<boolean> => {
     return Boolean(adapter);
   } catch (err) {
     console.warn('[LocalTranscription] WebGPU adapter check failed:', err);
+    return false;
+  }
+};
+
+export const checkIsModelCached = async (modelId = PRIMARY_MODEL): Promise<boolean> => {
+  if (typeof window === 'undefined' || !('caches' in window)) {
+    return false;
+  }
+  try {
+    const cache = await caches.open('transformers-cache');
+    const requests = await cache.keys();
+    if (!requests || requests.length === 0) {
+      return false;
+    }
+    return requests.some(req => req.url.includes(modelId));
+  } catch (err) {
+    console.warn('[LocalTranscription] Cache check warning:', err);
     return false;
   }
 };
@@ -72,14 +99,41 @@ const resampleAudio = (audioBuffer: AudioBuffer, targetSampleRate = 16000): Floa
   return resampled;
 };
 
-const loadPipelineForBackend = async (backend: BackendType): Promise<ActiveTranscriber> => {
-  const { pipeline } = await import('@huggingface/transformers');
+const loadPipelineForBackend = async (
+  backend: BackendType,
+  onProgress?: ProgressCallback
+): Promise<ActiveTranscriber> => {
+  const { pipeline, env } = await import('@huggingface/transformers');
+
+  // Enable Transformers.js browser caching
+  env.useBrowserCache = true;
+  env.allowRemoteModels = true;
+
+  const progressCallback = (info: any) => {
+    if ((info.status === 'progress_total' || info.status === 'progress') && typeof info.progress === 'number') {
+      const pct = Math.min(100, Math.max(0, Math.round(info.progress)));
+      onProgress?.({
+        stage: 'downloading',
+        percent: pct,
+        message: `Preparing voice recognition...\nDownloading AI model: ${pct}%`,
+      });
+    } else if (info.status === 'ready' || info.status === 'done') {
+      onProgress?.({
+        stage: 'initializing',
+        message: 'Initializing local AI...',
+      });
+    }
+  };
 
   if (backend === 'webgpu') {
-    console.info('[LocalTranscription] Attempting to load Whisper model on WebGPU...');
-    const transcriber = await pipeline('automatic-speech-recognition', 'Xenova/whisper-tiny', {
+    console.info(`[LocalTranscription] Loading ${PRIMARY_MODEL} on WebGPU...`);
+    const transcriber = await pipeline('automatic-speech-recognition', PRIMARY_MODEL, {
       device: 'webgpu',
-      dtype: 'fp32',
+      dtype: {
+        encoder_model: 'fp32',
+        decoder_model_merged: 'q4',
+      },
+      progress_callback: progressCallback,
     });
     console.info('[LocalTranscription] Successfully loaded Whisper on WebGPU.');
     return {
@@ -92,10 +146,11 @@ const loadPipelineForBackend = async (backend: BackendType): Promise<ActiveTrans
     throw new Error('This browser cannot run the local transcription model via WebAssembly.');
   }
 
-  console.info('[LocalTranscription] Loading Whisper model on WASM (dtype: q8)...');
-  const transcriber = await pipeline('automatic-speech-recognition', 'Xenova/whisper-tiny', {
+  console.info(`[LocalTranscription] Loading ${PRIMARY_MODEL} on WASM (dtype: q8)...`);
+  const transcriber = await pipeline('automatic-speech-recognition', PRIMARY_MODEL, {
     device: 'wasm',
     dtype: 'q8',
+    progress_callback: progressCallback,
   });
   console.info('[LocalTranscription] Successfully loaded Whisper on WASM.');
   return {
@@ -104,30 +159,29 @@ const loadPipelineForBackend = async (backend: BackendType): Promise<ActiveTrans
   };
 };
 
-const getOrLoadTranscriber = async (forcedBackend?: BackendType): Promise<ActiveTranscriber> => {
-  // If we already have a loaded instance matching the requested backend, reuse it
+const getOrLoadTranscriber = async (
+  forcedBackend?: BackendType,
+  onProgress?: ProgressCallback
+): Promise<ActiveTranscriber> => {
   if (activeTranscriberInstance && (!forcedBackend || activeTranscriberInstance.backend === forcedBackend)) {
     return activeTranscriberInstance;
   }
 
-  // If a load is currently pending, await the existing cached Promise (singleton)
   if (activeTranscriberPromise) {
     return activeTranscriberPromise;
   }
 
   activeTranscriberPromise = (async () => {
-    // If explicitly forced (e.g. falling back to wasm after webgpu failure)
     if (forcedBackend === 'wasm') {
-      const wasmInstance = await loadPipelineForBackend('wasm');
+      const wasmInstance = await loadPipelineForBackend('wasm', onProgress);
       activeTranscriberInstance = wasmInstance;
       return wasmInstance;
     }
 
-    // Check if WebGPU is available and prefer it
     const webGpuSupported = await isWebGpuAvailable();
     if (webGpuSupported) {
       try {
-        const webGpuInstance = await loadPipelineForBackend('webgpu');
+        const webGpuInstance = await loadPipelineForBackend('webgpu', onProgress);
         activeTranscriberInstance = webGpuInstance;
         return webGpuInstance;
       } catch (webGpuLoadError) {
@@ -135,8 +189,7 @@ const getOrLoadTranscriber = async (forcedBackend?: BackendType): Promise<Active
       }
     }
 
-    // Fall back to WASM backend
-    const wasmInstance = await loadPipelineForBackend('wasm');
+    const wasmInstance = await loadPipelineForBackend('wasm', onProgress);
     activeTranscriberInstance = wasmInstance;
     return wasmInstance;
   })()
@@ -163,7 +216,10 @@ export const localTranscriptionService = {
     );
   },
 
-  async transcribe(blob: Blob): Promise<string> {
+  async transcribe(
+    blob: Blob,
+    onProgress?: ProgressCallback
+  ): Promise<string> {
     const AudioContextClass = getAudioContext();
     const audioContext = new AudioContextClass();
 
@@ -183,15 +239,43 @@ export const localTranscriptionService = {
         return '';
       }
 
-      // 1. Get or lazily load the transcriber (prefers WebGPU, falls back to WASM on init failure)
-      let currentTranscriber = await getOrLoadTranscriber();
+      // 1. Cache-awareness check before showing long loading state
+      if (!activeTranscriberInstance) {
+        const isCached = await checkIsModelCached(PRIMARY_MODEL);
+        if (isCached) {
+          onProgress?.({
+            stage: 'preparing',
+            message: 'Voice recognition ready',
+          });
+        } else {
+          onProgress?.({
+            stage: 'preparing',
+            message: 'Preparing voice recognition for first use...',
+          });
+        }
+      }
 
-      // 2. Attempt inference with the loaded model
+      // 2. Lazily load the transcriber singleton (prefers WebGPU, falls back to WASM on failure)
+      let currentTranscriber = await getOrLoadTranscriber(undefined, onProgress);
+
+      // 3. Indicate transcribing stage
+      onProgress?.({
+        stage: 'transcribing',
+        message: 'Transcribing your recording...',
+      });
+
+      // 4. Run inference
       try {
         const result = await currentTranscriber.transcribe(audioData, {
           chunk_length_s: 30,
           stride_length_s: 5,
         });
+
+        onProgress?.({
+          stage: 'completed',
+          message: 'Voice transcription complete.',
+        });
+
         return result?.text ? result.text.trim() : '';
       } catch (inferenceError) {
         console.warn(
@@ -199,21 +283,37 @@ export const localTranscriptionService = {
           inferenceError
         );
 
-        // 3. If WebGPU inference failed, fall back to WASM and retry inference once
+        // 5. If WebGPU inference failed, fall back to WASM and retry inference once
         if (currentTranscriber.backend === 'webgpu') {
           console.info('[LocalTranscription] Retrying inference once using WASM fallback backend...');
           activeTranscriberInstance = null;
           activeTranscriberPromise = null;
 
-          const fallbackTranscriber = await getOrLoadTranscriber('wasm');
+          onProgress?.({
+            stage: 'initializing',
+            message: 'Retrying on WebAssembly fallback...',
+          });
+
+          const fallbackTranscriber = await getOrLoadTranscriber('wasm', onProgress);
+
+          onProgress?.({
+            stage: 'transcribing',
+            message: 'Transcribing your recording...',
+          });
+
           const retryResult = await fallbackTranscriber.transcribe(audioData, {
             chunk_length_s: 30,
             stride_length_s: 5,
           });
+
+          onProgress?.({
+            stage: 'completed',
+            message: 'Voice transcription complete.',
+          });
+
           return retryResult?.text ? retryResult.text.trim() : '';
         }
 
-        // If it was already on WASM or retry failed, rethrow
         throw inferenceError;
       }
     } finally {
