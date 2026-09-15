@@ -73,7 +73,7 @@ export const ProblemReportForm: React.FC<ProblemReportFormProps> = ({ onSuccess,
         setVoiceError('No speech was detected. You can type the report normally below.');
       }
     } catch (error) {
-      console.warn('Local transcription unavailable:', error);
+      console.error('[ProblemReportForm] Local transcription error:', error);
       setVoiceError('Local transcription could not run. Your audio stays on this device; you can type the report normally below.');
     } finally {
       setIsTranscribing(false);
@@ -118,7 +118,8 @@ export const ProblemReportForm: React.FC<ProblemReportFormProps> = ({ onSuccess,
       };
 
       mediaRecorder.onstop = () => {
-        const audioBlobObj = new Blob(audioChunksRef.current, { type: 'audio/webm' });
+        const mimeType = mediaRecorderRef.current?.mimeType || 'audio/webm';
+        const audioBlobObj = new Blob(audioChunksRef.current, { type: mimeType });
         const url = URL.createObjectURL(audioBlobObj);
         setAudioUrl(url);
         void transcribeRecordedAudio(audioBlobObj);
@@ -252,26 +253,59 @@ export const ProblemReportForm: React.FC<ProblemReportFormProps> = ({ onSuccess,
     setLocationSuccess(false);
     setUsingDemoLocation(false);
 
-    if (!navigator.geolocation) {
+    if (typeof navigator === 'undefined' || !navigator.geolocation) {
       setLocationError('Browser Geolocation API is not supported on this device.');
       setIsLocating(false);
       return;
     }
 
+    const highAccuracyOptions: PositionOptions = {
+      enableHighAccuracy: true,
+      timeout: 18000,
+      maximumAge: 60000,
+    };
+
+    const lowAccuracyOptions: PositionOptions = {
+      enableHighAccuracy: false,
+      timeout: 15000,
+      maximumAge: 300000,
+    };
+
+    const handleSuccess = (position: GeolocationPosition) => {
+      const lat = parseFloat(position.coords.latitude.toFixed(4));
+      const lng = parseFloat(position.coords.longitude.toFixed(4));
+      setCoordinates({ lat, lng });
+      setLocationSuccess(true);
+      setIsLocating(false);
+      setLocationError(null);
+    };
+
+    const handleError = (error: GeolocationPositionError, isRetry = false) => {
+      console.warn(`[Geolocation] ${isRetry ? 'Retry ' : ''}failed:`, error.message, `(Code ${error.code})`);
+
+      // If high-accuracy timed out (Code 3: TIMEOUT), automatically retry once with low accuracy
+      if (!isRetry && error.code === error.TIMEOUT) {
+        console.info('[Geolocation] High-accuracy timed out. Retrying once with network/low-accuracy geolocation...');
+        navigator.geolocation.getCurrentPosition(
+          handleSuccess,
+          retryError => handleError(retryError, true),
+          lowAccuracyOptions
+        );
+        return;
+      }
+
+      if (error.code === error.PERMISSION_DENIED) {
+        setLocationError('Location permission denied. Please enable location permissions or use the sample location.');
+      } else {
+        setLocationError('Location could not be detected. Please try again or use the sample location.');
+      }
+      setIsLocating(false);
+    };
+
     navigator.geolocation.getCurrentPosition(
-      position => {
-        const lat = parseFloat(position.coords.latitude.toFixed(4));
-        const lng = parseFloat(position.coords.longitude.toFixed(4));
-        setCoordinates({ lat, lng });
-        setLocationSuccess(true);
-        setIsLocating(false);
-      },
-      error => {
-        console.error('GPS Location error:', error);
-        setLocationError(`GPS Error: ${error.message} (Code ${error.code})`);
-        setIsLocating(false);
-      },
-      { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+      handleSuccess,
+      error => handleError(error, false),
+      highAccuracyOptions
     );
   };
 
