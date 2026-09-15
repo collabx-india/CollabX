@@ -20,6 +20,8 @@ interface ActiveTranscriber {
 }
 
 const PRIMARY_MODEL = 'onnx-community/whisper-tiny.en';
+const ORT_VERSION = '1.26.0-dev.20260416-b7804b056c';
+const ORT_WASM_CDN = `https://cdn.jsdelivr.net/npm/onnxruntime-web@${ORT_VERSION}/dist/`;
 
 let activeTranscriberInstance: ActiveTranscriber | null = null;
 let activeTranscriberPromise: Promise<ActiveTranscriber> | null = null;
@@ -30,9 +32,18 @@ export const isWebGpuAvailable = async (): Promise<boolean> => {
   }
   try {
     const adapter = await navigator.gpu.requestAdapter();
-    return Boolean(adapter);
-  } catch (err) {
-    console.warn('[LocalTranscription] WebGPU adapter check failed:', err);
+    if (!adapter) {
+      return false;
+    }
+    // Safely verify device acquisition
+    const device = await adapter.requestDevice();
+    if (!device) {
+      return false;
+    }
+    device.destroy();
+    return true;
+  } catch (err: any) {
+    console.warn('[LocalTranscription] WebGPU verification failed (will use WASM):', err?.message || err);
     return false;
   }
 };
@@ -70,33 +81,62 @@ const resampleAudio = (audioBuffer: AudioBuffer, targetSampleRate = 16000): Floa
     return new Float32Array(0);
   }
 
+  // 1. Convert to mono with finite value verification
   const mono = new Float32Array(sourceLength);
   const numberOfChannels = audioBuffer.numberOfChannels;
 
   for (let channel = 0; channel < numberOfChannels; channel += 1) {
     const channelData = audioBuffer.getChannelData(channel);
     for (let index = 0; index < sourceLength; index += 1) {
-      mono[index] += channelData[index] / numberOfChannels;
+      const val = channelData[index];
+      if (Number.isFinite(val)) {
+        mono[index] += val / numberOfChannels;
+      }
     }
   }
 
+  // 2. Resample to targetSampleRate if needed
+  let finalAudio: Float32Array;
   if (audioBuffer.sampleRate === targetSampleRate) {
-    return mono;
+    finalAudio = mono;
+  } else {
+    const targetLength = Math.max(1, Math.floor((sourceLength * targetSampleRate) / audioBuffer.sampleRate));
+    const resampled = new Float32Array(targetLength);
+    const ratio = (sourceLength - 1) / Math.max(1, targetLength - 1);
+
+    for (let index = 0; index < targetLength; index += 1) {
+      const sourceIndex = index * ratio;
+      const lowerIndex = Math.floor(sourceIndex);
+      const upperIndex = Math.min(sourceLength - 1, lowerIndex + 1);
+      const weight = sourceIndex - lowerIndex;
+      const interpolated = mono[lowerIndex] * (1 - weight) + mono[upperIndex] * weight;
+      resampled[index] = Number.isFinite(interpolated) ? interpolated : 0;
+    }
+    finalAudio = resampled;
   }
 
-  const targetLength = Math.max(1, Math.floor((sourceLength * targetSampleRate) / audioBuffer.sampleRate));
-  const resampled = new Float32Array(targetLength);
-  const ratio = (sourceLength - 1) / Math.max(1, targetLength - 1);
-
-  for (let index = 0; index < targetLength; index += 1) {
-    const sourceIndex = index * ratio;
-    const lowerIndex = Math.floor(sourceIndex);
-    const upperIndex = Math.min(sourceLength - 1, lowerIndex + 1);
-    const weight = sourceIndex - lowerIndex;
-    resampled[index] = mono[lowerIndex] * (1 - weight) + mono[upperIndex] * weight;
+  // 3. Ensure finite values & compute safe metadata
+  let minAmplitude = 0;
+  let maxAmplitude = 0;
+  for (let i = 0; i < finalAudio.length; i++) {
+    const val = finalAudio[i];
+    if (!Number.isFinite(val)) {
+      finalAudio[i] = 0;
+    } else {
+      if (val < minAmplitude) minAmplitude = val;
+      if (val > maxAmplitude) maxAmplitude = val;
+    }
   }
 
-  return resampled;
+  console.info('[LocalTranscription] Audio input prepared safely:', {
+    sampleRate: targetSampleRate,
+    numberOfSamples: finalAudio.length,
+    durationSec: Number((finalAudio.length / targetSampleRate).toFixed(2)),
+    minAmplitude: Number(minAmplitude.toFixed(3)),
+    maxAmplitude: Number(maxAmplitude.toFixed(3)),
+  });
+
+  return finalAudio;
 };
 
 const loadPipelineForBackend = async (
@@ -105,9 +145,24 @@ const loadPipelineForBackend = async (
 ): Promise<ActiveTranscriber> => {
   const { pipeline, env } = await import('@huggingface/transformers');
 
-  // Enable Transformers.js browser caching
+  // Configure Transformers.js environment
   env.useBrowserCache = true;
   env.allowRemoteModels = true;
+  env.allowLocalModels = false; // Never try loading from relative /models/ path on GitHub Pages
+
+  // Configure explicit ONNX WASM CDN paths to prevent 404s on GitHub Pages (/CollabX/)
+  if (env.backends?.onnx?.wasm) {
+    const isSafari = typeof navigator !== 'undefined' && /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+    env.backends.onnx.wasm.wasmPaths = isSafari
+      ? {
+          mjs: `${ORT_WASM_CDN}ort-wasm-simd-threaded.mjs`,
+          wasm: `${ORT_WASM_CDN}ort-wasm-simd-threaded.wasm`,
+        }
+      : {
+          mjs: `${ORT_WASM_CDN}ort-wasm-simd-threaded.asyncify.mjs`,
+          wasm: `${ORT_WASM_CDN}ort-wasm-simd-threaded.asyncify.wasm`,
+        };
+  }
 
   const progressCallback = (info: any) => {
     if ((info.status === 'progress_total' || info.status === 'progress') && typeof info.progress === 'number') {
@@ -126,37 +181,47 @@ const loadPipelineForBackend = async (
   };
 
   if (backend === 'webgpu') {
-    console.info(`[LocalTranscription] Loading ${PRIMARY_MODEL} on WebGPU...`);
-    const transcriber = await pipeline('automatic-speech-recognition', PRIMARY_MODEL, {
-      device: 'webgpu',
-      dtype: {
-        encoder_model: 'fp32',
-        decoder_model_merged: 'q4',
-      },
-      progress_callback: progressCallback,
-    });
-    console.info('[LocalTranscription] Successfully loaded Whisper on WebGPU.');
-    return {
-      backend: 'webgpu',
-      transcribe: transcriber as unknown as LocalTranscriber,
-    };
+    console.info(`[LocalTranscription] Attempting pipeline load on WebGPU: ${PRIMARY_MODEL}`);
+    try {
+      const transcriber = await pipeline('automatic-speech-recognition', PRIMARY_MODEL, {
+        device: 'webgpu',
+        dtype: {
+          encoder_model: 'fp32',
+          decoder_model_merged: 'q4',
+        },
+        progress_callback: progressCallback,
+      });
+      console.info('[LocalTranscription] Successfully initialized Whisper on WebGPU.');
+      return {
+        backend: 'webgpu',
+        transcribe: transcriber as unknown as LocalTranscriber,
+      };
+    } catch (webGpuError: any) {
+      console.error('[LocalTranscription] WebGPU pipeline creation threw error:', webGpuError, webGpuError?.stack);
+      throw webGpuError;
+    }
   }
 
   if (!('WebAssembly' in window)) {
     throw new Error('This browser cannot run the local transcription model via WebAssembly.');
   }
 
-  console.info(`[LocalTranscription] Loading ${PRIMARY_MODEL} on WASM (dtype: q8)...`);
-  const transcriber = await pipeline('automatic-speech-recognition', PRIMARY_MODEL, {
-    device: 'wasm',
-    dtype: 'q8',
-    progress_callback: progressCallback,
-  });
-  console.info('[LocalTranscription] Successfully loaded Whisper on WASM.');
-  return {
-    backend: 'wasm',
-    transcribe: transcriber as unknown as LocalTranscriber,
-  };
+  console.info(`[LocalTranscription] Attempting pipeline load on WASM: ${PRIMARY_MODEL}`);
+  try {
+    const transcriber = await pipeline('automatic-speech-recognition', PRIMARY_MODEL, {
+      device: 'wasm',
+      dtype: 'q8',
+      progress_callback: progressCallback,
+    });
+    console.info('[LocalTranscription] Successfully initialized Whisper on WASM.');
+    return {
+      backend: 'wasm',
+      transcribe: transcriber as unknown as LocalTranscriber,
+    };
+  } catch (wasmError: any) {
+    console.error('[LocalTranscription] WASM pipeline creation threw error:', wasmError, wasmError?.stack);
+    throw wasmError;
+  }
 };
 
 const getOrLoadTranscriber = async (
@@ -184,8 +249,8 @@ const getOrLoadTranscriber = async (
         const webGpuInstance = await loadPipelineForBackend('webgpu', onProgress);
         activeTranscriberInstance = webGpuInstance;
         return webGpuInstance;
-      } catch (webGpuLoadError) {
-        console.warn('[LocalTranscription] WebGPU initialization failed, falling back to WASM:', webGpuLoadError);
+      } catch (webGpuLoadError: any) {
+        console.error('[LocalTranscription] WebGPU initialization failed, falling back to WASM:', webGpuLoadError, webGpuLoadError?.stack);
       }
     }
 
@@ -194,6 +259,7 @@ const getOrLoadTranscriber = async (
     return wasmInstance;
   })()
     .catch(error => {
+      console.error('[LocalTranscription] Failed to get or load transcriber:', error, error?.stack);
       activeTranscriberInstance = null;
       throw error;
     })
@@ -277,10 +343,11 @@ export const localTranscriptionService = {
         });
 
         return result?.text ? result.text.trim() : '';
-      } catch (inferenceError) {
-        console.warn(
+      } catch (inferenceError: any) {
+        console.error(
           `[LocalTranscription] Inference error on ${currentTranscriber.backend} backend:`,
-          inferenceError
+          inferenceError,
+          inferenceError?.stack
         );
 
         // 5. If WebGPU inference failed, fall back to WASM and retry inference once
@@ -316,6 +383,9 @@ export const localTranscriptionService = {
 
         throw inferenceError;
       }
+    } catch (generalError: any) {
+      console.error('[LocalTranscription] General error during transcribe():', generalError, generalError?.stack);
+      throw generalError;
     } finally {
       try {
         await audioContext.close();

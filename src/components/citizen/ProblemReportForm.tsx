@@ -160,14 +160,35 @@ export const ProblemReportForm: React.FC<ProblemReportFormProps> = ({ onSuccess,
     setUsingDemoVoice(false);
   };
 
-  const handleUseDemoVoice = () => {
+  const handleUseDemoVoice = async () => {
     deleteVoiceRecording();
     setUsingDemoVoice(true);
-    const demoVoiceText = 'Every monsoon, water enters this road and school children cannot cross. The main culvert is choked and water stands for 8 hours.';
-    setAudioTranscript(demoVoiceText);
-    setDescription(demoVoiceText);
-    if (!title) {
-      setTitle('Waterlogging in Harmu bypass cutting off school access');
+
+    const baseUrl = import.meta.env.BASE_URL || '/';
+    const sampleVoiceUrl = `${baseUrl.endsWith('/') ? baseUrl : baseUrl + '/'}sample-voice.wav`;
+
+    try {
+      const response = await fetch(sampleVoiceUrl);
+      if (!response.ok) {
+        throw new Error(`Failed to load sample voice audio: HTTP ${response.status}`);
+      }
+      const audioBlob = await response.blob();
+      const localUrl = URL.createObjectURL(audioBlob);
+      setAudioUrl(localUrl);
+
+      // Run real local Whisper transcription deterministically on the sample voice audio!
+      await transcribeRecordedAudio(audioBlob);
+      if (!title) {
+        setTitle('Monsoon waterlogging in Harmu corridor');
+      }
+    } catch (err: any) {
+      console.warn('[ProblemReportForm] Sample voice transcription fallback:', err);
+      const demoVoiceText = 'Every monsoon, water enters this road and school children cannot cross. The main culvert is choked and water stands for 8 hours.';
+      setAudioTranscript(demoVoiceText);
+      setDescription(demoVoiceText);
+      if (!title) {
+        setTitle('Waterlogging in Harmu bypass cutting off school access');
+      }
     }
   };
 
